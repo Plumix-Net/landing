@@ -31,10 +31,6 @@ jobs:
         run: npm ci
 
       - name: Build project
-        env:
-          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
-          VITE_APPLE_CLIENT_ID: ${{ secrets.VITE_APPLE_CLIENT_ID }}
-          VITE_APPLE_REDIRECT_URI: ${{ secrets.VITE_APPLE_REDIRECT_URI }}
         run: npm run build
 
       - name: Deploy to Beget via FTP
