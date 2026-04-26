@@ -100,12 +100,12 @@ const packages = [
   },
   {
     name: "Plumix.Material",
-    desc: "Material Design control set — buttons, app bars, sheets, ripple effects.",
+    desc: "Material Design layer — scaffold, buttons, FAB, cards, list tiles, drawer, navigation bar, switch/checkbox/radio, ripple, and Hero transitions.",
     href: "https://www.nuget.org/packages/Plumix.Material/",
   },
   {
     name: "Plumix.Cupertino",
-    desc: "Cupertino-style adaptive controls for iOS / macOS aesthetics.",
+    desc: "Cupertino adaptive controls — CupertinoCheckbox, CupertinoRadio, and Cupertino-path Switch for iOS / macOS aesthetics.",
     href: "https://www.nuget.org/packages/Plumix.Cupertino/",
   },
 ];
@@ -146,7 +146,7 @@ const Index = () => {
               className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/40 px-3 py-1 text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary-glow" />
-              v0.4 — M4 Material rewrite in progress
+              v0.4 · M4 Material library — April 2026
               <ArrowRight className="h-3.5 w-3.5" />
             </a>
 
