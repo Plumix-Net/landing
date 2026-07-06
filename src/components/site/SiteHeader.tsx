@@ -45,7 +45,7 @@ export const SiteHeader = () => {
             Plumix
           </span>
           <span className="hidden sm:inline-block rounded-md border border-border bg-secondary/60 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
-            v0.4
+            v0.5
           </span>
         </Link>
 

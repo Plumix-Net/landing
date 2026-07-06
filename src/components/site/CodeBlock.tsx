@@ -11,45 +11,61 @@ interface CodeBlockProps {
 }
 
 // Lightweight C# / shell syntax highlighter — purely for display, no deps.
+// Tokenizes in a single pass so matched tokens (e.g. the keyword `class`)
+// are never re-scanned once already wrapped in emitted HTML.
 function highlight(code: string, language: string): string {
   const escape = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-  let out = escape(code);
+  const tokenize = (pattern: RegExp, classify: (token: string) => string) => {
+    let out = "";
+    let last = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(code)) !== null) {
+      out += escape(code.slice(last, match.index));
+      const token = match[0];
+      out += `<span class="${classify(token)}">${escape(token)}</span>`;
+      last = pattern.lastIndex;
+    }
+    out += escape(code.slice(last));
+    return out;
+  };
 
   if (language === "csharp") {
-    const keywords = [
+    const keywords = new Set([
       "public", "private", "protected", "internal", "sealed", "class", "struct",
       "interface", "override", "virtual", "static", "readonly", "void", "return",
       "new", "var", "using", "namespace", "this", "base", "abstract", "true",
       "false", "null", "if", "else", "for", "foreach", "in", "while", "switch",
       "case", "default", "break", "continue", "async", "await", "record",
-    ];
-    // strings
-    out = out.replace(/(&quot;[^&]*?&quot;)/g, '<span class="text-emerald-300">$1</span>');
-    // comments
-    out = out.replace(/(\/\/[^\n]*)/g, '<span class="text-muted-foreground italic">$1</span>');
-    // numbers
-    out = out.replace(/\b(\d+)\b/g, '<span class="text-amber-300">$1</span>');
-    // keywords
-    out = out.replace(
-      new RegExp(`\\b(${keywords.join("|")})\\b`, "g"),
-      '<span class="text-primary-glow font-medium">$1</span>'
+    ]);
+    const pattern = new RegExp(
+      ['"[^"]*"', "//[^\\n]*", "\\b\\d+\\b", "\\b[A-Za-z_][A-Za-z0-9_]*\\b"].join("|"),
+      "g"
     );
-    // types (PascalCase identifiers)
-    out = out.replace(
-      /\b([A-Z][A-Za-z0-9_]*)\b/g,
-      '<span class="text-violet-300">$1</span>'
-    );
+    return tokenize(pattern, (token) => {
+      if (token.startsWith('"')) return "text-emerald-300";
+      if (token.startsWith("//")) return "text-muted-foreground italic";
+      if (/^\d/.test(token)) return "text-amber-300";
+      if (keywords.has(token)) return "text-primary-glow font-medium";
+      if (/^[A-Z]/.test(token)) return "text-violet-300";
+      return "";
+    });
   } else if (language === "bash" || language === "shell") {
-    out = out.replace(/^(\$\s*)/gm, '<span class="text-muted-foreground">$1</span>');
-    out = out.replace(/\b(dotnet|add|package|install)\b/g,
-      '<span class="text-primary-glow font-medium">$1</span>');
-    out = out.replace(/(Plumix(?:\.[A-Za-z]+)?)/g,
-      '<span class="text-violet-300">$1</span>');
+    const bashKeywords = new Set(["dotnet", "add", "package", "install"]);
+    const pattern = new RegExp(
+      ["^\\$\\s*", "\\bPlumix(?:\\.[A-Za-z]+)?\\b", "\\b[A-Za-z]+\\b"].join("|"),
+      "gm"
+    );
+    return tokenize(pattern, (token) => {
+      if (/^\$/.test(token)) return "text-muted-foreground";
+      if (/^Plumix/.test(token)) return "text-violet-300";
+      if (bashKeywords.has(token)) return "text-primary-glow font-medium";
+      return "";
+    });
   }
 
-  return out;
+  return escape(code);
 }
 
 export const CodeBlock = ({
