@@ -11,6 +11,21 @@ interface Release {
 
 const releases: Release[] = [
   {
+    version: "0.5.0",
+    date: "2026-07-06",
+    tag: "Latest",
+    title: "M4 — Material library rewrite (continued): interactive controls & hot reload",
+    changes: [
+      { type: "added", text: "Hot reload: an assembly-level MetadataUpdateHandler (HotReloadManager) reassembles all live hosts on the UI thread after .NET Hot Reload edits (dotnet watch, IDE hot reload), rebuilding the widget tree and re-laying-out/repainting while preserving State. Includes a Ctrl/Cmd+Shift+R manual reassemble shortcut for IDEs that skip the callback." },
+      { type: "added", text: "ButtonBar with row-to-column overflow, alignment, ButtonBarTheme, and BottomAppBar's FAB-aware notch clipping." },
+      { type: "added", text: "RefreshIndicator and RefreshProgressIndicator with drag/armed/snap/refresh lifecycle and Material/adaptive/no-spinner variants." },
+      { type: "added", text: "Stepper and Step with vertical/horizontal layouts, per-step state icons, and animated connectors." },
+      { type: "added", text: "DropdownButton<T> and DropdownMenuItem<T> with hint, disabled, dense, and expanded selection states." },
+      { type: "added", text: "PopupMenuButton<T>, PopupMenuItem<T>, CheckedPopupMenuItem<T>, and PopupMenuDivider with anchored, non-opaque routes." },
+      { type: "added", text: "AboutDialog, LicensePage, and AboutListTile with a lazy package license registry and grouped detail navigation." },
+    ],
+  },
+  {
     version: "0.4.0",
     date: "2026-04-25",
     tag: "Pre-release",

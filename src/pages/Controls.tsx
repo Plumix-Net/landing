@@ -69,6 +69,13 @@ const controls: Control[] = [
   { name: "Checkbox", category: "Material", desc: "Material checkbox with tristate; Checkbox.Adaptive uses CupertinoCheckbox.", flutter: "Checkbox" },
   { name: "Radio", category: "Material", desc: "Material radio button; Radio.Adaptive uses CupertinoRadio on iOS/macOS.", flutter: "Radio" },
   { name: "Tooltip", category: "Material", desc: "Hover-triggered label overlay used by FAB and navigation bar tiles.", flutter: "Tooltip" },
+  { name: "ButtonBar", category: "Material", desc: "Aligns action buttons in a row with automatic column overflow and spacing.", flutter: "ButtonBar" },
+  { name: "RefreshIndicator", category: "Material", desc: "Pull-to-refresh wrapper with Material arrowhead/spinner animation and adaptive variants.", flutter: "RefreshIndicator" },
+  { name: "Stepper", category: "Material", desc: "Vertical or horizontal step-by-step flow with per-step state icons and connectors.", flutter: "Stepper" },
+  { name: "DropdownButton", category: "Material", desc: "Tap-to-open selection list anchored to a button, with hint, disabled, and dense states.", flutter: "DropdownButton" },
+  { name: "PopupMenuButton", category: "Material", desc: "Anchored popup menu with items, dividers, and checked entries.", flutter: "PopupMenuButton" },
+  { name: "DataTable", category: "Material", desc: "Sortable rows and columns with header/data row styling and selection.", flutter: "DataTable" },
+  { name: "AboutDialog", category: "Material", desc: "Application info dialog with an OSS license browser via LicensePage.", flutter: "AboutDialog" },
 
   // Cupertino
   { name: "CupertinoCheckbox", category: "Cupertino", desc: "iOS-style checkbox with Cupertino geometry, dark-mode gradient fill, and vector check indicator.", flutter: "CupertinoCheckbox" },

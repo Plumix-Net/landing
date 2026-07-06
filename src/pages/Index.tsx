@@ -24,7 +24,7 @@ const exampleCode = `public sealed class MyApp : StatelessWidget
     public override Widget Build(BuildContext context)
     {
         return new Container(
-            color: Brushes.White,
+            color: Colors.White,
             padding: new Thickness(24),
             child: new Column(
                 children:
@@ -100,7 +100,7 @@ const packages = [
   },
   {
     name: "Plumix.Material",
-    desc: "Material Design layer — scaffold, buttons, FAB, cards, list tiles, drawer, navigation bar, switch/checkbox/radio, ripple, and Hero transitions.",
+    desc: "Material Design layer — scaffold, buttons, FAB, cards, list tiles, drawer, navigation bar, switch/checkbox/radio, ripple, Hero transitions, plus dropdowns, popup menus, steppers, refresh indicators, data tables, and the About/License flow.",
     href: "https://www.nuget.org/packages/Plumix.Material/",
   },
   {
@@ -146,7 +146,7 @@ const Index = () => {
               className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/40 px-3 py-1 text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary-glow" />
-              v0.4 · M4 Material library — April 2026
+              v0.5 · Material controls + hot reload — July 2026
               <ArrowRight className="h-3.5 w-3.5" />
             </a>
 
@@ -220,6 +220,7 @@ const Index = () => {
                 "Immutable widgets, mutable elements, render objects do the work",
                 "BuildContext, State<T>, InheritedWidget — they all behave as expected",
                 "Layout protocol: parent passes constraints, child returns a size",
+                "Hot reload preserves State while you edit — dotnet watch, no restart",
               ].map((t) => (
                 <li key={t} className="flex items-start gap-2.5">
                   <CheckCircle2 className="h-4 w-4 mt-0.5 text-primary-glow flex-shrink-0" />
