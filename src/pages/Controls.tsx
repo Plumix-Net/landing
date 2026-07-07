@@ -1,4 +1,5 @@
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { Seo } from "@/components/Seo";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -108,6 +109,11 @@ const Controls = () => {
 
   return (
     <SiteLayout>
+      <Seo
+        title="Controls catalog — Plumix"
+        description="Browse every widget shipped in Plumix, Plumix.Material, and Plumix.Cupertino. Names match Flutter where possible, so porting feels like translation."
+        path="/controls"
+      />
       <section className="container py-12 md:py-16">
         <div className="max-w-2xl">
           <span className="text-xs font-mono uppercase tracking-wider text-primary-glow">

@@ -1,4 +1,5 @@
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { Seo } from "@/components/Seo";
 import { CodeBlock } from "@/components/site/CodeBlock";
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen, Boxes, Layers, Wrench } from "lucide-react";
@@ -68,6 +69,11 @@ const sections = [
 const Docs = () => {
   return (
     <SiteLayout>
+      <Seo
+        title="Getting started — Plumix docs"
+        description="Install Plumix, build your first widget tree, and learn the Widget → Element → RenderObject architecture — a Flutter-faithful UI framework for .NET."
+        path="/docs"
+      />
       <section className="container py-12 md:py-16">
         <div className="grid gap-12 lg:grid-cols-[220px_1fr]">
           {/* Sidebar */}

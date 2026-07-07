@@ -1,4 +1,5 @@
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { Seo } from "@/components/Seo";
 import { GitCommit } from "lucide-react";
 
 interface Release {
@@ -102,6 +103,11 @@ const typeStyles = {
 const Changelog = () => {
   return (
     <SiteLayout>
+      <Seo
+        title="Changelog — Plumix releases"
+        description="Versioned history of Plumix releases: new widgets, Material and Cupertino controls, hot reload, and behavior notes where Plumix diverges from Flutter."
+        path="/changelog"
+      />
       <section className="container py-12 md:py-16">
         <div className="max-w-2xl">
           <span className="text-xs font-mono uppercase tracking-wider text-primary-glow">

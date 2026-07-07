@@ -1,4 +1,5 @@
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { Seo } from "@/components/Seo";
 import { CodeBlock } from "@/components/site/CodeBlock";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -133,6 +134,11 @@ const StatusBadge = ({ status }: { status: "done" | "progress" | "planned" }) =>
 const Index = () => {
   return (
     <SiteLayout>
+      <Seo
+        title="Plumix — Flutter-like UI framework for C#"
+        description="Plumix brings Flutter's Widget → Element → RenderObject architecture to .NET. Build cross-platform UIs in C# with the same mental model as Flutter."
+        path="/"
+      />
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-hero-glow pointer-events-none" />
