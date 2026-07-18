@@ -1,0 +1,24 @@
+Options -MultiViews
+RewriteEngine On
+
+# www → non-www (301)
+RewriteCond %{HTTP_HOST} ^www\.plumix\.net$ [NC]
+RewriteRule ^(.*)$ https://plumix.net/$1 [R=301,L]
+
+# http → https (301). Beget terminates SSL on nginx, so check
+# X-Forwarded-Proto as well as HTTPS to avoid redirect loops.
+RewriteCond %{HTTPS} !on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://plumix.net/$1 [R=301,L]
+
+# SPA fallback: serve index.html for routes handled by react-router
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# index.html must always be revalidated so deploys are picked up
+<IfModule mod_headers.c>
+  <FilesMatch "^index\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
