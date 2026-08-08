@@ -1,8 +1,8 @@
-import { SiteLayout } from "@/components/site/SiteLayout";
+import { Link } from "react-router-dom";
+import { Boxes, Layers, Wrench } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { CodeBlock } from "@/components/site/CodeBlock";
-import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Boxes, Layers, Wrench } from "lucide-react";
+import { Code, DocsLayout } from "@/components/site/DocsLayout";
 
 const setupCode = `dotnet new console -n HelloPlumix
 cd HelloPlumix
@@ -32,176 +32,128 @@ public static class Program
     public static void Main() => PlumixHost.Run(new App());
 }`;
 
-const stateCode = `public sealed class Counter : StatefulWidget
-{
-    public override State CreateState() => new _CounterState();
-}
-
-internal sealed class _CounterState : State<Counter>
-{
-    private int _count;
-
-    public override Widget Build(BuildContext context)
-    {
-        return new Column(
-            children:
-            [
-                new Text($"Count: {_count}"),
-                new TextButton(
-                    onPressed: () => SetState(() => _count++),
-                    child: new Text("Increment")
-                )
-            ]
-        );
-    }
-}`;
-
-const sections = [
-  { id: "overview", label: "Overview" },
-  { id: "install", label: "Installation" },
-  { id: "first-app", label: "Your first app" },
-  { id: "architecture", label: "Architecture" },
-  { id: "state", label: "Stateful widgets" },
-  { id: "layout", label: "Layout protocol" },
-  { id: "next", label: "What's next" },
-];
-
 const Docs = () => {
   return (
-    <SiteLayout>
-      <Seo
-        title="Getting started — Plumix docs"
-        description="Install Plumix, build your first widget tree, and learn the Widget → Element → RenderObject architecture — a Flutter-faithful UI framework for .NET."
-        path="/docs"
-      />
-      <section className="container py-12 md:py-16">
-        <div className="grid gap-12 lg:grid-cols-[220px_1fr]">
-          {/* Sidebar */}
-          <aside className="hidden lg:block">
-            <div className="sticky top-24">
-              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">
-                On this page
-              </p>
-              <nav className="space-y-1 border-l border-border">
-                {sections.map((s) => (
-                  <a
-                    key={s.id}
-                    href={`#${s.id}`}
-                    className="block pl-4 -ml-px border-l border-transparent hover:border-primary py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {s.label}
-                  </a>
-                ))}
-              </nav>
-              <div className="mt-8 card-surface rounded-lg p-4">
-                <p className="text-xs text-muted-foreground">Need controls?</p>
-                <Link
-                  to="/controls"
-                  className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary-glow hover:text-primary"
-                >
-                  Browse catalog <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-            </div>
-          </aside>
+    <DocsLayout
+      path="/docs"
+      title="Getting started"
+      intro={
+        <>
+          Plumix is a Flutter-faithful UI framework for .NET. This guide takes you from{" "}
+          <Code>dotnet new</Code> to your first widget tree rendered on screen.
+        </>
+      }
+    >
+      <Seo path="/docs" />
 
-          {/* Content */}
-          <article className="max-w-3xl">
-            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-primary-glow">
-              <BookOpen className="h-3.5 w-3.5" /> Documentation
-            </div>
-            <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">Getting started</h1>
-            <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-              Plumix is a Flutter-faithful UI framework for .NET. This guide walks you from
-              <code className="mx-1 rounded bg-secondary px-1.5 py-0.5 text-sm font-mono">dotnet new</code>
-              to your first widget tree.
-            </p>
+      <h2 id="overview" className="mt-14 scroll-mt-24 text-2xl font-semibold flex items-center gap-2">
+        <Layers className="h-5 w-5 text-primary-glow" /> What Plumix is
+      </h2>
+      <p className="mt-3 text-muted-foreground leading-relaxed">
+        Plumix mirrors Flutter's three-tree architecture in C#. You describe the UI as a tree of
+        immutable <strong className="text-foreground">Widgets</strong>. The framework instantiates a
+        parallel tree of mutable <strong className="text-foreground">Elements</strong>, which in turn
+        manage <strong className="text-foreground">RenderObjects</strong> that perform layout, paint
+        and hit-testing.
+      </p>
+      <p className="mt-3 text-muted-foreground leading-relaxed">
+        Avalonia provides the platform host — window, input events, GPU-backed surface. Everything
+        above that surface is owned by Plumix, which is what separates it from a wrapper library:
+        there is no second control set underneath translating your widgets into someone else's
+        layout system.
+      </p>
+      <p className="mt-3 text-muted-foreground leading-relaxed">
+        If you have written Flutter before, the payoff is that porting a Dart widget to C# is closer
+        to translation than to a rewrite. If you haven't, Plumix is still a normal declarative UI
+        framework — no XAML, no code-behind, just C#.{" "}
+        <Link to="/docs/architecture" className="text-primary-glow hover:text-primary">
+          The architecture page
+        </Link>{" "}
+        explains the three trees in detail.
+      </p>
 
-            <h2 id="overview" className="mt-14 scroll-mt-24 text-2xl font-semibold flex items-center gap-2">
-              <Layers className="h-5 w-5 text-primary-glow" /> Overview
-            </h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed">
-              Plumix mirrors Flutter's three-tree architecture. You describe the UI as a tree of
-              immutable <strong className="text-foreground">Widgets</strong>. The framework
-              instantiates a parallel tree of mutable <strong className="text-foreground">Elements</strong>,
-              which in turn manage <strong className="text-foreground">RenderObjects</strong> that
-              perform layout, paint, and hit-testing.
-            </p>
-            <p className="mt-3 text-muted-foreground leading-relaxed">
-              Avalonia provides the platform host (window, input events, GPU-backed surface).
-              Everything above the surface — measure, arrange, paint — is owned by Plumix.
-            </p>
+      <h2 id="install" className="mt-12 scroll-mt-24 text-2xl font-semibold flex items-center gap-2">
+        <Wrench className="h-5 w-5 text-primary-glow" /> Installation
+      </h2>
+      <p className="mt-3 text-muted-foreground">
+        Plumix targets <Code>net8.0</Code> and later, on Windows, macOS and Linux. Create a console
+        app and add the packages:
+      </p>
+      <div className="mt-4">
+        <CodeBlock code={setupCode} language="bash" filename="terminal" />
+      </div>
+      <p className="mt-3 text-muted-foreground">
+        <Code>Plumix</Code> alone is enough for the core widget set. Add{" "}
+        <Code>Plumix.Material</Code> for Material Design 3 controls, or{" "}
+        <Code>Plumix.Cupertino</Code> for iOS-style ones — see the{" "}
+        <Link to="/controls" className="text-primary-glow hover:text-primary">
+          controls catalog
+        </Link>{" "}
+        for what ships in each.
+      </p>
 
-            <h2 id="install" className="mt-12 scroll-mt-24 text-2xl font-semibold flex items-center gap-2">
-              <Wrench className="h-5 w-5 text-primary-glow" /> Installation
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Plumix targets <code className="mx-0.5 rounded bg-secondary px-1.5 py-0.5 text-sm font-mono">net8.0</code> and later.
-              Create a new console app and add the packages:
-            </p>
-            <div className="mt-4">
-              <CodeBlock code={setupCode} language="bash" filename="terminal" />
-            </div>
+      <h2 id="first-app" className="mt-12 scroll-mt-24 text-2xl font-semibold flex items-center gap-2">
+        <Boxes className="h-5 w-5 text-primary-glow" /> Your first app
+      </h2>
+      <p className="mt-3 text-muted-foreground">
+        Compose a simple Material scaffold. <Code>PlumixHost.Run</Code> bootstraps the Avalonia
+        surface and mounts the widget tree.
+      </p>
+      <div className="mt-4">
+        <CodeBlock code={appCode} language="csharp" filename="Program.cs" />
+      </div>
+      <p className="mt-3 text-muted-foreground">
+        Run it with <Code>dotnet watch</Code> rather than <Code>dotnet run</Code>. Hot reload
+        preserves <Code>State</Code> across edits, so counters and scroll positions survive while the
+        widget tree rebuilds — the workflow Flutter developers expect.
+      </p>
 
-            <h2 id="first-app" className="mt-12 scroll-mt-24 text-2xl font-semibold flex items-center gap-2">
-              <Boxes className="h-5 w-5 text-primary-glow" /> Your first app
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Compose a simple Material scaffold. <code className="mx-0.5 rounded bg-secondary px-1.5 py-0.5 text-sm font-mono">PlumixHost.Run</code> bootstraps the Avalonia surface and mounts the widget tree.
-            </p>
-            <div className="mt-4">
-              <CodeBlock code={appCode} language="csharp" filename="Program.cs" />
-            </div>
-
-            <h2 id="architecture" className="mt-12 scroll-mt-24 text-2xl font-semibold">Architecture</h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed">
-              Each widget produces an Element via{" "}
-              <code className="rounded bg-secondary px-1.5 py-0.5 text-sm font-mono">CreateElement()</code>.
-              Elements form a long-lived tree mirroring the widget tree. When parent widgets rebuild,
-              elements decide whether to <em>update</em> in place (same runtime type and key) or
-              <em>recreate</em>. RenderObjects sit beneath elements and implement the layout/paint protocol.
-            </p>
-            <ul className="mt-4 space-y-2 text-muted-foreground">
-              <li>• <strong className="text-foreground">Widget</strong> — immutable configuration</li>
-              <li>• <strong className="text-foreground">Element</strong> — mutable instance, owns lifecycle</li>
-              <li>• <strong className="text-foreground">RenderObject</strong> — performs layout, paint, hit-test</li>
-            </ul>
-
-            <h2 id="state" className="mt-12 scroll-mt-24 text-2xl font-semibold">Stateful widgets</h2>
-            <p className="mt-3 text-muted-foreground">
-              Mutable state lives in <code className="rounded bg-secondary px-1.5 py-0.5 text-sm font-mono">State&lt;T&gt;</code>. Call{" "}
-              <code className="rounded bg-secondary px-1.5 py-0.5 text-sm font-mono">SetState</code> to mark the element dirty and trigger a rebuild.
-            </p>
-            <div className="mt-4">
-              <CodeBlock code={stateCode} language="csharp" filename="Counter.cs" />
-            </div>
-
-            <h2 id="layout" className="mt-12 scroll-mt-24 text-2xl font-semibold">Layout protocol</h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed">
-              Layout is a single-pass <strong className="text-foreground">constraints down, sizes up</strong> walk —
-              identical to Flutter. A parent passes{" "}
-              <code className="rounded bg-secondary px-1.5 py-0.5 text-sm font-mono">BoxConstraints</code> to each child;
-              the child returns a <code className="rounded bg-secondary px-1.5 py-0.5 text-sm font-mono">Size</code>; the parent then
-              positions children for paint.
-            </p>
-
-            <h2 id="next" className="mt-12 scroll-mt-24 text-2xl font-semibold">What's next</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <Link to="/controls" className="card-surface rounded-lg p-5 hover:border-primary/40 transition-colors">
-                <div className="text-sm font-mono text-primary-glow">Controls</div>
-                <div className="mt-1 font-medium">Browse the widget catalog</div>
-                <p className="mt-1 text-sm text-muted-foreground">Core, Material, Cupertino — every shipped widget.</p>
-              </Link>
-              <Link to="/changelog" className="card-surface rounded-lg p-5 hover:border-primary/40 transition-colors">
-                <div className="text-sm font-mono text-primary-glow">Changelog</div>
-                <div className="mt-1 font-medium">Track releases</div>
-                <p className="mt-1 text-sm text-muted-foreground">Versioned history of every API change.</p>
-              </Link>
-            </div>
-          </article>
-        </div>
-      </section>
-    </SiteLayout>
+      <h2 id="next" className="mt-12 scroll-mt-24 text-2xl font-semibold">
+        Where to go next
+      </h2>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <Link
+          to="/docs/architecture"
+          className="card-surface rounded-lg p-5 hover:border-primary/40 transition-colors"
+        >
+          <div className="text-sm font-mono text-primary-glow">Architecture</div>
+          <div className="mt-1 font-medium">Widget · Element · RenderObject</div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            How the three trees relate, and when an element updates versus recreates.
+          </p>
+        </Link>
+        <Link
+          to="/docs/state"
+          className="card-surface rounded-lg p-5 hover:border-primary/40 transition-colors"
+        >
+          <div className="text-sm font-mono text-primary-glow">Stateful widgets</div>
+          <div className="mt-1 font-medium">State&lt;T&gt; and SetState</div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Where mutable state lives and how a rebuild is triggered.
+          </p>
+        </Link>
+        <Link
+          to="/docs/layout"
+          className="card-surface rounded-lg p-5 hover:border-primary/40 transition-colors"
+        >
+          <div className="text-sm font-mono text-primary-glow">Layout protocol</div>
+          <div className="mt-1 font-medium">Constraints down, sizes up</div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The single-pass layout walk, identical to Flutter's.
+          </p>
+        </Link>
+        <Link
+          to="/changelog"
+          className="card-surface rounded-lg p-5 hover:border-primary/40 transition-colors"
+        >
+          <div className="text-sm font-mono text-primary-glow">Changelog</div>
+          <div className="mt-1 font-medium">Track releases</div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Versioned history, including documented divergences from Flutter.
+          </p>
+        </Link>
+      </div>
+    </DocsLayout>
   );
 };
 

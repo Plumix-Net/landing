@@ -2,7 +2,6 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Github, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/plumix-logo.jpg";
 
 const links = [
   { to: "/", label: "Home", end: true },
@@ -39,7 +38,13 @@ export const SiteHeader = () => {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
           <div className="relative h-8 w-8 overflow-hidden rounded-lg ring-1 ring-border">
-            <img src={logo} alt="Plumix logo" className="h-full w-full object-cover" />
+            <img
+              src="/logo-64.png"
+              alt="Plumix logo"
+              width={64}
+              height={64}
+              className="h-full w-full object-cover"
+            />
           </div>
           <span className="text-lg font-semibold tracking-tight">
             Plumix

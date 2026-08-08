@@ -1,15 +1,20 @@
 import { Link } from "react-router-dom";
 import { Github } from "lucide-react";
-import logo from "@/assets/plumix-logo.jpg";
 
 export const SiteFooter = () => {
   return (
     <footer className="border-t border-border bg-background/40 mt-24">
-      <div className="container py-12 grid gap-10 md:grid-cols-4">
+      <div className="container py-12 grid gap-10 md:grid-cols-5">
         <div className="md:col-span-2">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="h-8 w-8 overflow-hidden rounded-lg ring-1 ring-border">
-              <img src={logo} alt="Plumix logo" className="h-full w-full object-cover" />
+              <img
+                src="/logo-64.png"
+                alt="Plumix logo"
+                width={64}
+                height={64}
+                className="h-full w-full object-cover"
+              />
             </div>
             <span className="text-lg font-semibold">Plumix</span>
           </Link>
@@ -20,11 +25,23 @@ export const SiteFooter = () => {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold mb-3">Project</h4>
+          <h4 className="text-sm font-semibold mb-3">Documentation</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/docs" className="hover:text-foreground">Documentation</Link></li>
-            <li><Link to="/controls" className="hover:text-foreground">Controls</Link></li>
+            <li><Link to="/docs" className="hover:text-foreground">Getting started</Link></li>
+            <li><Link to="/docs/architecture" className="hover:text-foreground">Widget · Element · RenderObject</Link></li>
+            <li><Link to="/docs/state" className="hover:text-foreground">Stateful widgets</Link></li>
+            <li><Link to="/docs/layout" className="hover:text-foreground">Layout protocol</Link></li>
             <li><Link to="/changelog" className="hover:text-foreground">Changelog</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold mb-3">Controls</h4>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/controls" className="hover:text-foreground">Full catalog</Link></li>
+            <li><Link to="/controls/core" className="hover:text-foreground">Core widgets</Link></li>
+            <li><Link to="/controls/material" className="hover:text-foreground">Material controls</Link></li>
+            <li><Link to="/controls/cupertino" className="hover:text-foreground">Cupertino controls</Link></li>
           </ul>
         </div>
 

@@ -103,17 +103,15 @@ const typeStyles = {
 const Changelog = () => {
   return (
     <SiteLayout>
-      <Seo
-        title="Changelog — Plumix releases"
-        description="Versioned history of Plumix releases: new widgets, Material and Cupertino controls, hot reload, and behavior notes where Plumix diverges from Flutter."
-        path="/changelog"
-      />
+      <Seo path="/changelog" />
       <section className="container py-12 md:py-16">
         <div className="max-w-2xl">
           <span className="text-xs font-mono uppercase tracking-wider text-primary-glow">
             Releases
           </span>
-          <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">Changelog</h1>
+          <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">
+            Plumix changelog
+          </h1>
           <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
             Versioned history of Plumix releases. Anywhere behavior diverges from Flutter,
             it's called out explicitly.

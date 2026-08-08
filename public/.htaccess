@@ -1,4 +1,5 @@
-Options -MultiViews
+Options -MultiViews -Indexes
+
 RewriteEngine On
 
 # www → non-www (301)
@@ -11,14 +12,42 @@ RewriteCond %{HTTPS} !on
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^(.*)$ https://plumix.net/$1 [R=301,L]
 
-# SPA fallback: serve index.html for routes handled by react-router
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+# Trailing slash → canonical extensionless URL (301), so /docs/ and /docs don't
+# both resolve to a 200.
+RewriteCond %{REQUEST_URI} !^/$
+RewriteRule ^(.+)/$ /$1 [R=301,L]
 
-# index.html must always be revalidated so deploys are picked up
+# Serve the prerendered file for an extensionless route: /docs → /docs.html.
+# This has to win before mod_dir sees /docs as a directory (dist/docs/ exists for
+# the nested pages) and 301s it to /docs/.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+)$ /$1.html [L]
+
+# Anything left over is genuinely missing. Fall through to ErrorDocument so it
+# answers 404 instead of the old SPA fallback's soft 200.
+ErrorDocument 404 /404.html
+
 <IfModule mod_headers.c>
-  <FilesMatch "^index\.html$">
+  # index.html and the other prerendered pages must revalidate so a deploy is
+  # picked up immediately.
+  <FilesMatch "\.html$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
+
+  # Vite fingerprints these filenames, so a changed file always has a new URL.
+  <FilesMatch "\.(js|css|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.(png|jpe?g|gif|svg|ico|webp|avif)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+
+  Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml \
+    application/javascript application/json application/xml image/svg+xml
 </IfModule>

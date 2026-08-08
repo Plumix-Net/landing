@@ -1,52 +1,45 @@
 import { useEffect } from "react";
+import { buildHead } from "@/seo/head";
+import { getRouteSeo, NOT_FOUND_SEO, type RouteSeo } from "@/seo/routes";
 
-export const SITE_URL = "https://plumix.net";
+export { SITE_URL } from "@/seo/routes";
 
 interface SeoProps {
-  title: string;
-  description: string;
-  /** Route path starting with "/", used to build the canonical URL. */
+  /** Route path starting with "/". Metadata is looked up in ROUTE_SEO. */
   path: string;
-  noindex?: boolean;
+  /** Escape hatch for routes that aren't in the static table (e.g. 404). */
+  fallback?: RouteSeo;
 }
 
-const setMeta = (attr: "name" | "property", key: string, content: string) => {
-  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
-  if (!el) {
-    el = document.createElement("meta");
-    el.setAttribute(attr, key);
-    document.head.appendChild(el);
-  }
-  el.setAttribute("content", content);
-};
+const MANAGED = "data-seo";
 
-export const Seo = ({ title, description, path, noindex }: SeoProps) => {
+/**
+ * Keeps <head> in sync during client-side navigation.
+ *
+ * The first paint already has the correct tags — scripts/prerender.mjs bakes them
+ * into each static HTML file from the same ROUTE_SEO table. This component only
+ * matters once react-router takes over and swaps routes without a page load.
+ */
+export const Seo = ({ path, fallback }: SeoProps) => {
   useEffect(() => {
-    const url = `${SITE_URL}${path === "/" ? "/" : path}`;
+    const seo = getRouteSeo(path) ?? fallback ?? NOT_FOUND_SEO;
+    const tags = buildHead(seo);
 
-    document.title = title;
-    setMeta("name", "description", description);
-    setMeta("property", "og:title", title);
-    setMeta("property", "og:description", description);
-    setMeta("property", "og:url", url);
-    setMeta("name", "twitter:title", title);
-    setMeta("name", "twitter:description", description);
+    document.head.querySelectorAll(`[${MANAGED}]`).forEach((el) => el.remove());
 
-    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.appendChild(canonical);
+    for (const t of tags) {
+      if (t.tag === "title") {
+        document.title = t.text ?? "";
+        continue;
+      }
+
+      const el = document.createElement(t.tag);
+      for (const [k, v] of Object.entries(t.attrs)) el.setAttribute(k, v);
+      if (t.text) el.textContent = t.text;
+      el.setAttribute(MANAGED, "");
+      document.head.appendChild(el);
     }
-    canonical.setAttribute("href", url);
-
-    const robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
-    if (noindex) {
-      setMeta("name", "robots", "noindex");
-    } else if (robots) {
-      robots.remove();
-    }
-  }, [title, description, path, noindex]);
+  }, [path, fallback]);
 
   return null;
 };

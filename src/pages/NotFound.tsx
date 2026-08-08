@@ -13,12 +13,7 @@ const NotFound = () => {
 
   return (
     <SiteLayout>
-      <Seo
-        title="Page not found — Plumix"
-        description="That route doesn't exist in this widget tree."
-        path={location.pathname}
-        noindex
-      />
+      <Seo path={location.pathname} />
       <section className="container py-32 text-center">
         <p className="text-sm font-mono uppercase tracking-wider text-primary-glow">404</p>
         <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">Widget not found</h1>

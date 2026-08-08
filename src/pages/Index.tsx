@@ -3,8 +3,10 @@ import { Seo } from "@/components/Seo";
 import { CodeBlock } from "@/components/site/CodeBlock";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { FAQ } from "@/seo/routes";
 import {
   ArrowRight,
+  ChevronDown,
   Github,
   Layers,
   Repeat,
@@ -134,11 +136,7 @@ const StatusBadge = ({ status }: { status: "done" | "progress" | "planned" }) =>
 const Index = () => {
   return (
     <SiteLayout>
-      <Seo
-        title="Plumix — Flutter-like UI framework for C#"
-        description="Plumix brings Flutter's Widget → Element → RenderObject architecture to .NET. Build cross-platform UIs in C# with the same mental model as Flutter."
-        path="/"
-      />
+      <Seo path="/" />
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-hero-glow pointer-events-none" />
@@ -217,9 +215,15 @@ const Index = () => {
               If you know Flutter, you already know Plumix.
             </h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              Compose UIs from immutable widgets. The framework manages an element tree
-              and a render tree under the hood — exactly the way Flutter does.
-              Same lifecycle, same layout protocol, same paint phase. Just C#.
+              Compose UIs from immutable widgets. The framework manages an{" "}
+              <Link to="/docs/architecture" className="text-primary-glow hover:text-primary">
+                element tree and a render tree
+              </Link>{" "}
+              under the hood — exactly the way Flutter does. Same lifecycle, same{" "}
+              <Link to="/docs/layout" className="text-primary-glow hover:text-primary">
+                layout protocol
+              </Link>
+              , same paint phase. Just C#.
             </p>
             <ul className="mt-6 space-y-3 text-sm">
               {[
@@ -347,6 +351,32 @@ const Index = () => {
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* FAQ — mirrored into FAQPage structured data via src/seo/routes.ts */}
+      <section className="container py-16 md:py-24 border-t border-border">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="text-xs font-mono uppercase tracking-wider text-primary-glow">
+            FAQ
+          </span>
+          <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">
+            Common questions
+          </h2>
+        </div>
+        {/* Native <details> rather than a JS accordion: the answers stay in the
+            DOM whether open or closed, which is what makes the FAQPage markup
+            legitimate and the text crawlable. */}
+        <div className="mt-12 mx-auto max-w-3xl space-y-3">
+          {FAQ.map((item) => (
+            <details key={item.q} className="card-surface rounded-xl px-5 py-4 group">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 text-base font-medium marker:content-['']">
+                <h3 className="text-base font-medium">{item.q}</h3>
+                <ChevronDown className="h-4 w-4 flex-shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-muted-foreground leading-relaxed">{item.a}</p>
+            </details>
+          ))}
+        </div>
       </section>
 
       {/* CTA */}

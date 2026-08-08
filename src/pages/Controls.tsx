@@ -1,8 +1,10 @@
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Seo } from "@/components/Seo";
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import { ChevronRight, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import NotFound from "./NotFound";
 
 type Category = "Core" | "Material" | "Cupertino";
 
@@ -90,12 +92,60 @@ const controls: Control[] = [
 
 const categories: Category[] = ["Core", "Material", "Cupertino"];
 
+/**
+ * Each category is its own indexable URL with its own copy, so the catalog is
+ * four crawlable pages rather than one page behind a JavaScript filter.
+ */
+const VIEWS = {
+  all: {
+    path: "/controls",
+    category: null as Category | null,
+    eyebrow: "API Reference",
+    heading: "Controls catalog",
+    intro: "Every widget shipped across the Plumix packages. Names match Flutter where possible — because porting should feel like translation.",
+    body: null as string | null,
+  },
+  core: {
+    path: "/controls/core",
+    category: "Core" as Category,
+    eyebrow: "Plumix core",
+    heading: "Core widgets",
+    intro: "The foundational widget set in the Plumix package — layout, text, gestures, focus and scrolling.",
+    body: "These are the widgets every Plumix app is built from, and the ones that sit closest to the render tree. Layout boxes such as Row, Column, Stack and the constraint-manipulating boxes implement the constraints-down, sizes-up protocol directly; GestureDetector feeds the gesture arena; Focus and Semantics wire up keyboard traversal and accessibility. Nothing here depends on Material or Cupertino, so a core-only app ships without either design system.",
+  },
+  material: {
+    path: "/controls/material",
+    category: "Material" as Category,
+    eyebrow: "Plumix.Material",
+    heading: "Material Design controls",
+    intro: "Material Design 3 controls for C# desktop apps, ported from Flutter's Material library.",
+    body: "Plumix.Material layers an app shell and a full control set on top of the core widgets: Scaffold with app bar, drawers and FAB; the four button emphases; cards, list tiles, data tables and steppers. Theming flows through ThemeData with M3 colour and typography tokens, and state layers, ripples and Hero transitions behave as they do in Flutter. Several controls expose Adaptive variants that switch to the Cupertino path on iOS and macOS.",
+  },
+  cupertino: {
+    path: "/controls/cupertino",
+    category: "Cupertino" as Category,
+    eyebrow: "Plumix.Cupertino",
+    heading: "Cupertino controls",
+    intro: "iOS-style controls that give a C# desktop app an Apple-platform look, following Flutter's Cupertino defaults.",
+    body: "Plumix.Cupertino provides the iOS-flavoured half of the adaptive story: Cupertino geometry, brightness-aware colours and the drag thresholds Apple's controls use. You can adopt these widgets directly, or reach them through the Adaptive variants on Switch, Checkbox and Radio in Plumix.Material, which select the Cupertino path automatically on iOS and macOS.",
+  },
+} as const;
+
+type ViewKey = keyof typeof VIEWS;
+
 const Controls = () => {
-  const [active, setActive] = useState<Category | "All">("All");
+  const { category: categoryParam } = useParams<{ category?: string }>();
   const [query, setQuery] = useState("");
 
+  const key = (categoryParam?.toLowerCase() ?? "all") as ViewKey;
+  const view = VIEWS[key];
+
+  // /controls/<anything-else> is not a real category — don't serve it a 200 page
+  // that canonicalises to /controls.
+  if (!view) return <NotFound />;
+
   const filtered = controls.filter((c) => {
-    if (active !== "All" && c.category !== active) return false;
+    if (view.category && c.category !== view.category) return false;
     if (query && !`${c.name} ${c.desc}`.toLowerCase().includes(query.toLowerCase())) return false;
     return true;
   });
@@ -109,43 +159,50 @@ const Controls = () => {
 
   return (
     <SiteLayout>
-      <Seo
-        title="Controls catalog — Plumix"
-        description="Browse every widget shipped in Plumix, Plumix.Material, and Plumix.Cupertino. Names match Flutter where possible, so porting feels like translation."
-        path="/controls"
-      />
+      <Seo path={view.path} />
       <section className="container py-12 md:py-16">
         <div className="max-w-2xl">
-          <span className="text-xs font-mono uppercase tracking-wider text-primary-glow">
-            API Reference
-          </span>
-          <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">
-            Controls catalog
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-            Every widget shipped across the Plumix packages. Names match Flutter where possible —
-            because porting should feel like translation.
-          </p>
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-primary-glow"
+          >
+            {view.category ? (
+              <>
+                <Link to="/controls" className="hover:text-primary">
+                  Controls
+                </Link>
+                <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                <span className="text-muted-foreground">{view.eyebrow}</span>
+              </>
+            ) : (
+              <span>{view.eyebrow}</span>
+            )}
+          </nav>
+          <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">{view.heading}</h1>
+          <p className="mt-4 text-lg text-muted-foreground leading-relaxed">{view.intro}</p>
+          {view.body && (
+            <p className="mt-4 text-muted-foreground leading-relaxed">{view.body}</p>
+          )}
         </div>
 
         <div className="mt-10 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
           <div className="flex flex-wrap gap-2">
-            {(["All", ...categories] as const).map((c) => (
-              <button
-                key={c}
-                onClick={() => setActive(c)}
+            {(["all", "core", "material", "cupertino"] as const).map((k) => (
+              <Link
+                key={k}
+                to={VIEWS[k].path}
                 className={cn(
                   "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition-colors",
-                  active === c
+                  key === k
                     ? "border-primary/60 bg-primary/15 text-foreground"
                     : "border-border bg-secondary/30 text-muted-foreground hover:text-foreground hover:border-primary/30"
                 )}
               >
-                {c}
+                {VIEWS[k].category ?? "All"}
                 <span className="font-mono text-xs text-muted-foreground">
-                  {counts[c]}
+                  {counts[VIEWS[k].category ?? "All"]}
                 </span>
-              </button>
+              </Link>
             ))}
           </div>
           <div className="relative md:w-72">
