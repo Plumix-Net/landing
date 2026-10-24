@@ -31,8 +31,13 @@ function highlight(code: string, language: string): string {
     return out;
   };
 
-  if (language === "csharp") {
-    const keywords = new Set([
+  if (language === "csharp" || language === "dart") {
+    const keywords = new Set(language === "dart" ? [
+      "class", "extends", "implements", "with", "mixin", "abstract", "final", "const",
+      "var", "void", "return", "new", "this", "super", "import", "export", "required",
+      "true", "false", "null", "if", "else", "for", "in", "while", "switch", "case",
+      "default", "break", "continue", "async", "await", "static", "late", "override",
+    ] : [
       "public", "private", "protected", "internal", "sealed", "class", "struct",
       "interface", "override", "virtual", "static", "readonly", "void", "return",
       "new", "var", "using", "namespace", "this", "base", "abstract", "true",
@@ -40,11 +45,11 @@ function highlight(code: string, language: string): string {
       "case", "default", "break", "continue", "async", "await", "record",
     ]);
     const pattern = new RegExp(
-      ['"[^"]*"', "//[^\\n]*", "\\b\\d+\\b", "\\b[A-Za-z_][A-Za-z0-9_]*\\b"].join("|"),
+      ['"[^"]*"', "'[^'\\n]*'", "//[^\\n]*", "\\b\\d+\\b", "\\b[A-Za-z_][A-Za-z0-9_]*\\b"].join("|"),
       "g"
     );
     return tokenize(pattern, (token) => {
-      if (token.startsWith('"')) return "text-emerald-300";
+      if (token.startsWith('"') || token.startsWith("'")) return "text-emerald-300";
       if (token.startsWith("//")) return "text-muted-foreground italic";
       if (/^\d/.test(token)) return "text-amber-300";
       if (keywords.has(token)) return "text-primary-glow font-medium";

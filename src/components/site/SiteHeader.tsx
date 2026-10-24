@@ -2,11 +2,13 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Github, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { PLUMIX_VERSION } from "@/seo/routes";
 
 const links = [
   { to: "/", label: "Home", end: true },
   { to: "/docs", label: "Docs" },
   { to: "/controls", label: "Controls" },
+  { to: "/blog", label: "Blog" },
   { to: "/changelog", label: "Changelog" },
   { to: "/netbench", label: "NetBench" },
 ];
@@ -51,7 +53,7 @@ export const SiteHeader = () => {
             Plumix
           </span>
           <span className="hidden sm:inline-block rounded-md border border-border bg-secondary/60 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
-            v0.5
+            v{PLUMIX_VERSION.replace(/-beta\.\d+$/, " beta")}
           </span>
         </Link>
 

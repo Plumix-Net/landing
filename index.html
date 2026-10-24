@@ -10,27 +10,10 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/logo-180.png" />
 
-    <!-- Fonts are loaded from <head> rather than @import in CSS so the request
-         starts immediately instead of waiting for the stylesheet to parse. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-      />
-    </noscript>
+    <!-- Inter and JetBrains Mono are self-hosted via @fontsource (imported in
+         src/main.tsx), so no third-party font origin sits on the critical path. -->
+
+    <link rel="alternate" type="application/rss+xml" title="Plumix blog" href="/blog/rss.xml" />
 
     <link rel="preconnect" href="https://img.shields.io" />
 

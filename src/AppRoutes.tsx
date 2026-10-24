@@ -6,6 +6,8 @@ import DocsState from "./pages/DocsState.tsx";
 import DocsLayoutProtocol from "./pages/DocsLayoutProtocol.tsx";
 import Controls from "./pages/Controls.tsx";
 import Changelog from "./pages/Changelog.tsx";
+import Blog from "./pages/Blog.tsx";
+import BlogPost from "./pages/BlogPost.tsx";
 import NetBench from "./pages/NetBench.tsx";
 import NetBenchPrivacy from "./pages/NetBenchPrivacy.tsx";
 import NetBenchTerms from "./pages/NetBenchTerms.tsx";
@@ -27,6 +29,8 @@ export const AppRoutes = () => (
     <Route path="/controls" element={<Controls />} />
     <Route path="/controls/:category" element={<Controls />} />
     <Route path="/changelog" element={<Changelog />} />
+    <Route path="/blog" element={<Blog />} />
+    <Route path="/blog/:slug" element={<BlogPost />} />
     <Route path="/netbench" element={<NetBench />} />
     <Route path="/netbench/privacy" element={<NetBenchPrivacy />} />
     <Route path="/netbench/terms" element={<NetBenchTerms />} />

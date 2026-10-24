@@ -1,0 +1,264 @@
+Plumix's central promise is that porting a Flutter widget to C# should feel like translation, not a
+rewrite. Here is what that looks like on two real widgets from Flutter's
+`packages/flutter/lib/src/widgets`, shown next to the C# files Plumix ships. Only doc comments,
+`using` lines and the `debugFillProperties` diagnostics are trimmed. The rest is the code as it is.
+
+## Warm-up: Spacer
+
+`Spacer` takes up the free space in a `Row` or `Column`. In Dart, the whole widget is a few lines:
+
+```dart
+class Spacer extends StatelessWidget {
+  const Spacer({super.key, this.flex = 1}) : assert(flex > 0);
+
+  final int flex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(flex: flex, child: const SizedBox.shrink());
+  }
+}
+```
+
+And this is `src/Plumix/Widgets/Spacer.cs`:
+
+```csharp
+// Dart parity source: flutter/packages/flutter/lib/src/widgets/spacer.dart
+namespace Plumix.Widgets;
+
+public sealed class Spacer : StatelessWidget
+{
+    public Spacer(int flex = 1, Key? key = null) : base(key)
+    {
+        if (Constants.KDebugMode && !(flex > 0))
+        {
+            throw new AssertionError("flex must be greater than zero.");
+        }
+
+        Flex = flex;
+    }
+
+    public int Flex { get; }
+
+    public override Widget Build(BuildContext context)
+    {
+        return new Expanded(flex: Flex, child: SizedBox.Shrink());
+    }
+}
+```
+
+The `build` method carries over almost word for word. What changes is the C# around it:
+
+- `const Spacer({super.key, this.flex = 1})` becomes an ordinary constructor with optional
+  parameters. The key goes last and is passed up with `: base(key)`.
+- `final int flex` becomes a get-only property, in PascalCase.
+- `assert(...)` becomes a check that only runs in debug builds and throws `AssertionError`, so a
+  release build pays nothing for it, as in Flutter.
+- The named constructor `SizedBox.shrink()` becomes a static factory, `SizedBox.Shrink()`.
+- The first line names the Dart file. Every framework file carries such a marker, and the
+  repository generates a Dart-to-C# map from them.
+
+Using it is just as familiar:
+
+```csharp
+new Row(
+    children:
+    [
+        new Text("Plumix"),
+        new Spacer(),
+        new Text("v0.4"),
+    ]
+);
+```
+
+## A real one: Placeholder
+
+`Placeholder` draws a box with a cross through it, the "something goes here" widget. It is small,
+but it touches the parts that make ports interesting: a private painter class, default values that
+are objects, an infinite size, and diagnostics. The Dart source:
+
+```dart
+class _PlaceholderPainter extends CustomPainter {
+  const _PlaceholderPainter({required this.color, required this.strokeWidth});
+
+  final Color color;
+  final double strokeWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+    final Rect rect = Offset.zero & size;
+    final path = Path()
+      ..addRect(rect)
+      ..addPolygon(<Offset>[rect.topRight, rect.bottomLeft], false)
+      ..addPolygon(<Offset>[rect.topLeft, rect.bottomRight], false);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_PlaceholderPainter oldPainter) {
+    return oldPainter.color != color || oldPainter.strokeWidth != strokeWidth;
+  }
+
+  @override
+  bool hitTest(Offset position) => false;
+}
+
+class Placeholder extends StatelessWidget {
+  const Placeholder({
+    super.key,
+    this.color = const Color(0xFF455A64), // Blue Grey 700
+    this.strokeWidth = 2.0,
+    this.fallbackWidth = 400.0,
+    this.fallbackHeight = 400.0,
+    this.child,
+  });
+
+  final Color color;
+  final double strokeWidth;
+  final double fallbackWidth;
+  final double fallbackHeight;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return LimitedBox(
+      maxWidth: fallbackWidth,
+      maxHeight: fallbackHeight,
+      child: CustomPaint(
+        size: Size.infinite,
+        painter: _PlaceholderPainter(color: color, strokeWidth: strokeWidth),
+        child: child,
+      ),
+    );
+  }
+}
+```
+
+The C# port, `src/Plumix/Widgets/Placeholder.cs`:
+
+```csharp
+// Dart parity source: flutter/packages/flutter/lib/src/widgets/placeholder.dart
+internal sealed class PlaceholderPainter : CustomPainter
+{
+    public PlaceholderPainter(Color color, double strokeWidth)
+    {
+        Color = color;
+        StrokeWidth = strokeWidth;
+    }
+
+    internal Color Color { get; }
+    internal double StrokeWidth { get; }
+
+    public override void Paint(PaintingContext context, Size size)
+    {
+        var pen = new Pen(new SolidColorBrush(Color), StrokeWidth);
+        var rect = new Rect(size);
+        context.Canvas.DrawRectangle(Brushes.Transparent, pen, rect);
+        context.Canvas.DrawLine(pen, rect.TopRight, rect.BottomLeft);
+        context.Canvas.DrawLine(pen, rect.TopLeft, rect.BottomRight);
+    }
+
+    public override bool ShouldRepaint(CustomPainter oldDelegate)
+    {
+        return oldDelegate is not PlaceholderPainter oldPainter
+               || oldPainter.Color != Color
+               || oldPainter.StrokeWidth != StrokeWidth;
+    }
+
+    public override bool? HitTest(Point position) => false;
+}
+
+public sealed class Placeholder : StatelessWidget
+{
+    public static Color DefaultColor { get; } = Color.FromARGB(0xFF, 0x45, 0x5A, 0x64);
+
+    public Placeholder(
+        Color? color = null,
+        double strokeWidth = 2.0,
+        double fallbackWidth = 400.0,
+        double fallbackHeight = 400.0,
+        Widget? child = null,
+        Key? key = null) : base(key)
+    {
+        Color = color ?? DefaultColor;
+        StrokeWidth = strokeWidth;
+        FallbackWidth = fallbackWidth;
+        FallbackHeight = fallbackHeight;
+        Child = child;
+    }
+
+    public Color Color { get; }
+    public double StrokeWidth { get; }
+    public double FallbackWidth { get; }
+    public double FallbackHeight { get; }
+    public Widget? Child { get; }
+
+    public override Widget Build(BuildContext context)
+    {
+        return new LimitedBox(
+            maxWidth: FallbackWidth,
+            maxHeight: FallbackHeight,
+            child: new CustomPaint(
+                size: new Size(double.PositiveInfinity, double.PositiveInfinity),
+                painter: new PlaceholderPainter(Color, StrokeWidth),
+                child: Child));
+    }
+}
+```
+
+Again, `build` is a straight translation: `LimitedBox` wraps `CustomPaint`, with the same
+parameters in the same places. The differences come from C#, plus one deliberate divergence.
+
+- **Object defaults.** C# optional parameters must be compile-time constants, so
+  `this.color = const Color(0xFF455A64)` becomes `Color? color = null` plus a static
+  `DefaultColor`. The caller sees the same behaviour: leave it out, and you get Blue Grey 700.
+- **Private classes.** Dart's library-private `_PlaceholderPainter` becomes an `internal` class.
+  C# names can't start with an underscore by convention, and `internal` is the nearest visibility.
+- **Overrides can't narrow parameter types.** Dart lets `shouldRepaint` take a
+  `_PlaceholderPainter`. C# requires the base signature, so the port takes a `CustomPainter` and
+  pattern-matches. The result is the same comparison of colour and stroke width.
+- **Named constants become expressions.** `Size.infinite` is spelled out as an infinite `Size`.
+- **Painting.** Here the port diverges on purpose. In Plumix, `CustomPainter.Paint` receives the
+  `PaintingContext` rather than the bare `Canvas`, and this painter draws with a pen instead of a
+  `Paint` and a `Path`. The rectangle and two diagonals are the same either way. The divergence is
+  recorded in the repository's divergence table rather than hidden.
+
+## The rules that cover most widgets
+
+After a few hundred files, the translation settles into a short table:
+
+| Dart | C# in Plumix |
+|---|---|
+| `class X extends StatelessWidget` | `public sealed class X : StatelessWidget` |
+| `const X({super.key, this.a = 1})` | `public X(int a = 1, Key? key = null) : base(key)` |
+| `final int a;` | `public int A { get; }` |
+| `@override Widget build(BuildContext context)` | `public override Widget Build(BuildContext context)` |
+| `assert(cond)` | debug-only check that throws `AssertionError` |
+| `const Color(0xFF455A64)` as a default | nullable parameter plus a static default |
+| `SizedBox.shrink()` (named constructor) | `SizedBox.Shrink()` (static factory) |
+| `_Private` class | `internal` class |
+| `State<MyWidget>` and `setState(() {...})` | `State<MyWidget>` and `SetState(() => ...)` |
+| `..cascade` calls | object initializers or sequential calls |
+
+Stateful widgets follow the same pattern. `createState`, `initState`, `didUpdateWidget` and
+`dispose` keep their names in PascalCase, as the [stateful widgets guide](/docs/state) shows.
+
+## How Plumix keeps ports honest
+
+Translating the code is half the job. The other half is proving it behaves the same. Plumix treats
+the Dart source as the specification: a control is ported end to end, with defaults, states, layout,
+painting and tests, in one go. Flutter's own widget tests are ported too, through
+`FrameworkDartTester`, a C# version of flutter_test's finders and matchers. A reference app written
+in real Flutter is kept in lockstep with the C# sample gallery, so the two can be compared screen by
+screen.
+
+## Try it on your own widget
+
+Pick a small `StatelessWidget` from your Flutter app and translate it with the table above. If it
+only composes standard widgets, it will usually compile on the first or second try. Every widget it
+uses is listed in the [controls catalog](/controls) under the same name. To set up a project, start
+with the [getting-started guide](/docs).

@@ -53,7 +53,7 @@ const DocsState = () => {
   return (
     <DocsLayout
       path="/docs/state"
-      title="Stateful widgets"
+      title="Stateful widgets in C#"
       intro={
         <>
           Widgets are immutable, so mutable data lives one level down — in a{" "}

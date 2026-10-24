@@ -58,6 +58,8 @@ export const SiteFooter = () => {
         <div>
           <h4 className="text-sm font-semibold mb-3">Resources</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/blog" className="hover:text-foreground">Blog</Link></li>
+            <li><a href="/blog/rss.xml" className="hover:text-foreground">RSS feed</a></li>
             <li>
               <a href="https://github.com/Plumix-Net/Plumix" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-foreground">
                 <Github className="h-3.5 w-3.5" /> GitHub

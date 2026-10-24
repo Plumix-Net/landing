@@ -1,5 +1,4 @@
-/* Google Fonts are linked from index.html <head> — an @import here would block
-   on this stylesheet parsing before the font request could even start. */
+/* Fonts are self-hosted through @fontsource, imported in src/main.tsx. */
 
 @tailwind base;
 @tailwind components;

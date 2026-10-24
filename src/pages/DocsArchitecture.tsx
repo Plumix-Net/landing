@@ -13,7 +13,7 @@ public sealed class Badge : StatelessWidget
 
     public override Widget Build(BuildContext context) =>
         new Container(
-            padding: new Thickness(8, 4),
+            padding: EdgeInsets.Symmetric(horizontal: 8, vertical: 4),
             child: new Text(Label)
         );
 }`;
@@ -43,7 +43,7 @@ const DocsArchitecture = () => {
   return (
     <DocsLayout
       path="/docs/architecture"
-      title="Widget, Element, RenderObject"
+      title="Widget, Element, RenderObject in C#"
       intro={
         <>
           Plumix ports Flutter's three-tree architecture to .NET rather than approximating it. This

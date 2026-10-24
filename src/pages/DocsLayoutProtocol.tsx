@@ -3,27 +3,32 @@ import { Seo } from "@/components/Seo";
 import { CodeBlock } from "@/components/site/CodeBlock";
 import { Code, DocsLayout } from "@/components/site/DocsLayout";
 
-const constraintsCode = `// A parent hands down constraints; the child answers with a size.
-protected override Size PerformLayout(BoxConstraints constraints)
+const constraintsCode = `// RenderPadding.PerformLayout, as it ships in Plumix (Rendering/ShiftedBox.cs).
+protected override void PerformLayout()
 {
-    var childConstraints = constraints.Deflate(Padding);
-    var childSize = Child.Layout(childConstraints, parentUsesSize: true);
+    BoxConstraints constraints = Constraints;
+    Thickness padding = ResolvedPadding;
+    double horizontal = padding.Left + padding.Right;
+    double vertical = padding.Top + padding.Bottom;
+    if (Child == null)
+    {
+        Size = constraints.Constrain(new Size(horizontal, vertical));
+        return;
+    }
 
-    Child.ParentData.Offset = new Offset(Padding.Left, Padding.Top);
-
-    return constraints.Constrain(
-        new Size(
-            childSize.Width + Padding.Horizontal,
-            childSize.Height + Padding.Vertical
-        )
-    );
+    BoxConstraints innerConstraints = constraints.Deflate(padding);
+    Child.Layout(innerConstraints, parentUsesSize: true);
+    var childParentData = (BoxParentData)Child.parentData!;
+    childParentData.offset = new Point(padding.Left, padding.Top);
+    Size = constraints.Constrain(
+        new Size(horizontal + Child.Size.Width, vertical + Child.Size.Height));
 }`;
 
 const DocsLayoutProtocol = () => {
   return (
     <DocsLayout
       path="/docs/layout"
-      title="Layout protocol"
+      title="Layout protocol: constraints down, sizes up"
       intro={
         <>
           Layout in Plumix is a single-pass walk: <strong className="text-foreground">constraints
@@ -53,9 +58,11 @@ const DocsLayoutProtocol = () => {
         Writing PerformLayout
       </h2>
       <p className="mt-3 text-muted-foreground leading-relaxed">
-        A render object implements the protocol in <Code>PerformLayout</Code>: deflate the incoming
-        constraints for whatever space you consume, lay the child out, position it, then return your
-        own size constrained to what the parent allowed.
+        A render object implements the protocol in <Code>PerformLayout</Code>, exactly as Flutter's{" "}
+        <Code>performLayout</Code> does: read the incoming <Code>Constraints</Code>, deflate them
+        for whatever space you consume, lay the child out, position it through its parent data, then
+        set your own <Code>Size</Code> constrained to what the parent allowed. Here is{" "}
+        <Code>RenderPadding</Code> from the framework itself:
       </p>
       <div className="mt-4">
         <CodeBlock code={constraintsCode} language="csharp" filename="RenderPadding.cs" />

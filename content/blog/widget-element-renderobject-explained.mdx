@@ -1,0 +1,248 @@
+Every Flutter explainer eventually says "Flutter has three trees". It's true, and it's the most useful
+thing to understand about the framework: it explains why rebuilding is cheap, where state lives and
+what keys are for. This post walks through the three trees with C# code, because Plumix ports them
+as they are. The class names, method names and decisions below are the same as in Flutter's
+`framework.dart`, and every snippet compiles against Plumix 0.4.
+
+## Widgets: cheap, immutable descriptions
+
+A widget is a configuration object, nothing more. It doesn't own pixels, a position or state. It
+says "a text with this string" or "a column with these children".
+
+```csharp
+public sealed class Badge : StatelessWidget
+{
+    public Badge(string label) => Label = label;
+
+    public string Label { get; }
+
+    public override Widget Build(BuildContext context) =>
+        new Container(
+            padding: EdgeInsets.Symmetric(horizontal: 8, vertical: 4),
+            child: new Text(Label)
+        );
+}
+```
+
+Because widgets are immutable and small, the framework can afford to throw them away. Each rebuild
+creates new `Badge`, `Container` and `Text` instances. That isn't the expensive part, and the next
+two trees are why.
+
+## Elements: the tree that persists
+
+When a widget is placed in the tree for the first time, the framework *inflates* it into an
+**element**. The element remembers which widget it currently represents, who its parent and children
+are, and where it sits in the tree. It survives rebuilds; widgets don't.
+
+Elements come in two families:
+
+- **Component elements** (`StatelessElement`, `StatefulElement`) don't draw anything. They call
+  `Build` and manage the child element that `Build` returned.
+- **Render object elements** (`RenderObjectElement` and its subclasses) own a render object, the
+  thing that actually lays out and paints.
+
+The `BuildContext` passed to every `Build` method *is* the element: `Element` implements
+`BuildContext`. When you call `Theme.Of(context)` or `Navigator.Of(context)`, you are asking that
+element about its ancestors: which theme is in effect above it, and which navigator it lives in.
+
+Element is also where **state** lives. A `StatefulWidget` is as immutable as any other widget. The
+mutable part is the `State<T>` object, created once and held by the `StatefulElement`:
+
+```csharp
+public sealed class Counter : StatefulWidget
+{
+    public override State CreateState() => new _CounterState();
+}
+
+internal sealed class _CounterState : State<Counter>
+{
+    private int _count;
+
+    public override Widget Build(BuildContext context)
+    {
+        return new Column(
+            children:
+            [
+                new Text($"Count: {_count}"),
+                new TextButton(
+                    onPressed: () => SetState(() => _count++),
+                    child: new Text("Increment")
+                )
+            ]
+        );
+    }
+}
+```
+
+`SetState` doesn't rebuild anything immediately. It marks the element dirty, and on the next frame
+the framework calls `Build` again for dirty elements only.
+
+## Update or recreate: the one rule that matters
+
+After a rebuild, each element holds a new widget from its parent. It has to decide whether to keep
+itself and its subtree, or tear everything down and start over. The whole decision is one method,
+here as it ships in Plumix:
+
+```csharp
+public static bool CanUpdate(Widget oldWidget, Widget newWidget)
+{
+    return oldWidget.GetType() == newWidget.GetType() && Equals(oldWidget.Key, newWidget.Key);
+}
+```
+
+Same type and same key: the element is **updated**. It takes the new widget, keeps its state and
+children, and passes the new configuration down. Different type or key: the old element is
+deactivated and a new one is inflated, which means a fresh `State`, fresh render objects and a fresh
+subtree.
+
+`Element.UpdateChild` applies the rule in three steps:
+
+1. No new widget: remove the child.
+2. The *same widget instance* as before: nothing to do. This is why caching a widget in a field or
+   constant skips rebuilding its subtree.
+3. `CanUpdate` returns true: call `child.Update(newWidget)`. Otherwise, inflate a new element.
+
+That rule is why rebuilding the whole screen on every `SetState` stays cheap. Most widgets come back
+with the same type in the same position, so the element tree barely changes, and the render tree
+only gets new property values.
+
+## Render objects: layout, paint, hit test
+
+Render objects do the actual work. Each has a size and a position. It takes part in layout, where
+constraints go down and sizes come up, and then paints itself and answers hit tests. Only
+`RenderObjectWidget`s create them, through two methods: `CreateRenderObject` on first inflate, and
+`UpdateRenderObject` on every update after that.
+
+Here is a complete leaf widget with its own render object, a coloured dot:
+
+```csharp
+public sealed class Dot : LeafRenderObjectWidget
+{
+    public Dot(Color color, double diameter = 24, Key? key = null) : base(key)
+    {
+        Color = color;
+        Diameter = diameter;
+    }
+
+    public Color Color { get; }
+    public double Diameter { get; }
+
+    public override RenderObject CreateRenderObject(BuildContext context) =>
+        new RenderDot(Color, Diameter);
+
+    public override void UpdateRenderObject(BuildContext context, RenderObject renderObject)
+    {
+        var dot = (RenderDot)renderObject;
+        dot.Color = Color;
+        dot.Diameter = Diameter;
+    }
+}
+
+public sealed class RenderDot : RenderBox
+{
+    private Color _color;
+    private double _diameter;
+
+    public RenderDot(Color color, double diameter)
+    {
+        _color = color;
+        _diameter = diameter;
+    }
+
+    public Color Color
+    {
+        get => _color;
+        set
+        {
+            if (_color == value) return;
+            _color = value;
+            MarkNeedsPaint();
+        }
+    }
+
+    public double Diameter
+    {
+        get => _diameter;
+        set
+        {
+            if (_diameter == value) return;
+            _diameter = value;
+            MarkNeedsLayout();
+        }
+    }
+
+    protected override void PerformLayout()
+    {
+        Size = Constraints.Constrain(new Size(_diameter, _diameter));
+    }
+
+    public override void Paint(PaintingContext context, Point offset)
+    {
+        Point center = offset + new Point(Size.Width / 2, Size.Height / 2);
+        double radius = Math.Min(Size.Width, Size.Height) / 2;
+        context.Canvas.DrawCircle(center, radius, new Paint { Color = _color });
+    }
+}
+```
+
+Look at the setters. A new colour only calls `MarkNeedsPaint`, because the dot's size doesn't
+change. A new diameter calls `MarkNeedsLayout`. If the parent rebuilds with an identical `Dot`, the
+setters return early and nothing happens. This is the third layer of savings: the widget was
+rebuilt, the element was updated, and the render object did no work at all.
+
+[The layout protocol page](/docs/layout) explains what happens inside `PerformLayout` when there are
+children.
+
+## Keys: telling elements apart
+
+`CanUpdate` compares keys, and that's where the familiar key bugs come from. Take two stateful tiles
+in a column, each counting its own taps, and a button that swaps their order:
+
+```csharp
+public sealed class Tile : StatefulWidget
+{
+    public Tile(string label, Key? key = null) : base(key) => Label = label;
+    public string Label { get; }
+    public override State CreateState() => new TileState();
+}
+
+internal sealed class TileState : State<Tile>
+{
+    private int _taps;
+
+    public override Widget Build(BuildContext context) =>
+        new GestureDetector(
+            onTap: () => SetState(() => _taps++),
+            child: new Text($"{Widget.Label}: {_taps} taps")
+        );
+}
+```
+
+Without keys, swapping `[a, b]` to `[b, a]` gives each element a widget of the same type in the
+same position. `CanUpdate` says "update", so the first element keeps its state and just takes the
+new label. The labels swap, but the tap counts stay where they were, attached to positions rather
+than tiles.
+
+Give each tile a key, and the column's children are matched by key instead of by position:
+
+```csharp
+var a = new Tile("A", key: new ValueKey<string>("A"));
+var b = new Tile("B", key: new ValueKey<string>("B"));
+```
+
+Now the elements, with their `State` objects, move along with their widgets. Use a key whenever
+siblings of the same type can be reordered, inserted or removed, as in list items, tabs or
+dismissible rows.
+
+## The short version
+
+- **Widgets** are throwaway descriptions. Rebuild them freely.
+- **Elements** are the persistent tree. They hold state, they *are* the `BuildContext`, and they
+  decide between updating and recreating with `CanUpdate`: same type and same key.
+- **Render objects** do layout, paint and hit testing. They only redo work when a property actually
+  changed.
+
+If you know this from Flutter, you already know it for Plumix: the trees, their rules and their
+names are the same. Next, see how this carries over to real code in
+[porting a Flutter widget to C#](/blog/port-flutter-widget-to-csharp), or read the
+[architecture overview](/docs/architecture).

@@ -40,6 +40,13 @@ export const buildHead = (seo: RouteSeo): HeadTag[] => {
     { tag: "meta", attrs: { name: "twitter:image:alt", content: seo.imageAlt } },
   ];
 
+  if (seo.ogType === "article" && seo.published) {
+    tags.push({ tag: "meta", attrs: { property: "article:published_time", content: seo.published } });
+    if (seo.updated) {
+      tags.push({ tag: "meta", attrs: { property: "article:modified_time", content: seo.updated } });
+    }
+  }
+
   if (seo.noindex) {
     tags.push({ tag: "meta", attrs: { name: "robots", content: "noindex, follow" } });
   }

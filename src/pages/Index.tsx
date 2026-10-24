@@ -3,7 +3,7 @@ import { Seo } from "@/components/Seo";
 import { CodeBlock } from "@/components/site/CodeBlock";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { FAQ } from "@/seo/routes";
+import { FAQ, PLUMIX_VERSION } from "@/seo/routes";
 import {
   ArrowRight,
   ChevronDown,
@@ -20,7 +20,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-const installCmd = "dotnet add package Plumix";
+const installCmd = "dotnet add package Plumix --prerelease";
 
 const exampleCode = `public sealed class MyApp : StatelessWidget
 {
@@ -28,7 +28,7 @@ const exampleCode = `public sealed class MyApp : StatelessWidget
     {
         return new Container(
             color: Colors.White,
-            padding: new Thickness(24),
+            padding: EdgeInsets.All(24),
             child: new Column(
                 children:
                 [
@@ -91,8 +91,10 @@ const milestones = [
   { id: "M1", title: "Core Parity Hardening", status: "done" },
   { id: "M2", title: "Input / Focus / Accessibility", status: "done" },
   { id: "M3", title: "Port-first Widget Set Expansion", status: "done" },
-  { id: "M4", title: "Material Library Rewrite", status: "progress" },
-  { id: "M5", title: "Cross-host Sample Parity & Stability", status: "planned" },
+  { id: "M4", title: "Material Library Rewrite", status: "done" },
+  { id: "M5", title: "Cross-host Sample Parity & Stability", status: "progress" },
+  { id: "M6", title: "Cupertino Library Port", status: "progress" },
+  { id: "RC", title: "v1.0 Release Candidate — API freeze", status: "planned" },
 ] as const;
 
 const packages = [
@@ -103,14 +105,28 @@ const packages = [
   },
   {
     name: "Plumix.Material",
-    desc: "Material Design layer — scaffold, buttons, FAB, cards, list tiles, drawer, navigation bar, switch/checkbox/radio, ripple, Hero transitions, plus dropdowns, popup menus, steppers, refresh indicators, data tables, and the About/License flow.",
+    desc: "Every widget in Flutter's Material library, Material 2 and 3 theming, the 8,825-icon Icons catalog and localizations for 119 locales.",
     href: "https://www.nuget.org/packages/Plumix.Material/",
   },
   {
     name: "Plumix.Cupertino",
-    desc: "Cupertino adaptive controls — CupertinoCheckbox, CupertinoRadio, and Cupertino-path Switch for iOS / macOS aesthetics.",
+    desc: "Flutter's Cupertino library — CupertinoApp, navigation and tab bars, pickers, text fields, sheets, context menus and iOS-style routes.",
     href: "https://www.nuget.org/packages/Plumix.Cupertino/",
   },
+  {
+    name: "Plumix.Android",
+    desc: "Android host — PlumixMainActivity runs your widget tree as a native Android app, system back button included.",
+    href: "https://www.nuget.org/packages/Plumix.Android/",
+  },
+];
+
+/** Smaller packages, listed under the main cards. */
+const extraPackages = [
+  { name: "Plumix.FSharp", note: "F# widget DSL", href: "https://www.nuget.org/packages/Plumix.FSharp/" },
+  { name: "Plumix.Elmish", note: "Elmish (MVU) host", href: "https://www.nuget.org/packages/Plumix.Elmish/" },
+  { name: "Plumix.Provider", note: "port of provider", href: "https://www.nuget.org/packages/Plumix.Provider/" },
+  { name: "Plumix.Bloc", note: "port of bloc", href: "https://www.nuget.org/packages/Plumix.Bloc/" },
+  { name: "Plumix.Slang", note: "port of slang i18n", href: "https://www.nuget.org/packages/Plumix.Slang/" },
 ];
 
 const StatusBadge = ({ status }: { status: "done" | "progress" | "planned" }) => {
@@ -143,24 +159,23 @@ const Index = () => {
         <div className="absolute inset-0 bg-grid pointer-events-none" />
         <div className="container relative pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="mx-auto max-w-3xl text-center animate-fade-up">
-            <a
-              href="https://github.com/Plumix-Net/Plumix"
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              to="/blog/plumix-0-4-beta"
               className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/40 px-3 py-1 text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary-glow" />
-              v0.5 · Material controls + hot reload — July 2026
+              v{PLUMIX_VERSION} · Cupertino port, Android &amp; iOS hosts — October 2026
               <ArrowRight className="h-3.5 w-3.5" />
-            </a>
+            </Link>
 
             <h1 className="mt-6 text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
-              Flutter's UI model,{" "}
+              Flutter's UI framework,{" "}
               <span className="text-gradient">written in C#</span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground leading-relaxed">
               Plumix brings Flutter's <span className="font-mono text-foreground">Widget → Element → RenderObject</span> architecture
-              to .NET. Port Flutter controls to C# with minimal conceptual translation.
+              to .NET. Build desktop and mobile apps in C#, and port Flutter widgets with minimal
+              conceptual translation.
             </p>
 
             <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -299,13 +314,13 @@ const Index = () => {
       <section className="container py-16 md:py-24 border-t border-border">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Three packages, one ecosystem
+            Packages for every layer
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Install only what you need. Material and Cupertino sit on top of Plumix core.
+            Install only what you need. Material, Cupertino and the hosts sit on top of Plumix core.
           </p>
         </div>
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {packages.map((p) => (
             <a
               key={p.name}
@@ -326,6 +341,23 @@ const Index = () => {
             </a>
           ))}
         </div>
+        <p className="mt-8 text-center text-sm text-muted-foreground">
+          Also on NuGet:{" "}
+          {extraPackages.map((p, i) => (
+            <span key={p.name}>
+              {i > 0 && " · "}
+              <a
+                href={p.href}
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono text-foreground/80 hover:text-primary-glow"
+              >
+                {p.name}
+              </a>{" "}
+              ({p.note})
+            </span>
+          ))}
+        </p>
       </section>
 
       {/* MILESTONES */}
@@ -336,7 +368,7 @@ const Index = () => {
           </span>
           <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">Current status</h2>
           <p className="mt-4 text-muted-foreground">
-            Five milestones tracking the path to a fully Flutter-parity .NET UI framework.
+            The public roadmap from core parity to a v1.0 release candidate.
           </p>
         </div>
         <ol className="mt-12 mx-auto max-w-3xl space-y-3">

@@ -1,0 +1,109 @@
+"Can I write Flutter in C#?" comes up every time a .NET team looks at Flutter. They like the widget
+model, hot reload and identical rendering on every platform, but they already have C# code,
+libraries and people. Flutter itself is Dart and will stay Dart. Still, over the years several
+projects have tried to close the gap, and they took four very different approaches.
+
+This is a survey of those approaches as of October 2026, including the project we build, Plumix. The
+aim is to show what each approach gives you and what it costs, so you can tell them apart.
+
+## 1. Drive a real Flutter UI from C#
+
+The most direct idea: keep Flutter as the renderer and let C# tell it what to show.
+[FlutterSharp](https://github.com/wieslawsoltes/FlutterSharp) did this on top of
+[Flet](https://flet.dev)'s protocol. The C# app describes the UI, serialises it with MessagePack and
+sends it over WebSocket or TCP to a Flutter client, which renders it. Updates travel as JSON Patch
+operations.
+
+**What you get:** real Flutter widgets and rendering, with application logic in C#.
+
+**What it costs:** two runtimes and a protocol between them. The UI vocabulary is whatever the bridge
+exposes, not Flutter's full API. Custom widgets still have to be written in Dart on the client side.
+
+**Status:** archived in January 2026.
+
+## 2. Translate Flutter's source to C#
+
+The second idea: take Flutter's Dart source and machine-translate it.
+[xamarin.flutter](https://github.com/adamped/xamarin.flutter) ran the Dart analyzer over the Flutter
+SDK, emitted C#, and drew through SkiaSharp and HarfBuzz instead of the Flutter engine. Its targets
+were Xamarin.Android, Xamarin.iOS and UWP.
+
+**What you get:** in principle, all of Flutter in C#.
+
+**What it costs:** a transpiler that has to keep up with a fast-moving SDK, and generated code that is
+hard to debug or fix by hand. The project was abandoned, and the repository says so.
+
+**Status:** archived in November 2020.
+
+## 3. A Flutter-style API over another toolkit
+
+The third idea takes the programming model, not the framework. You write declarative C#
+components with state and a `SetState`-style rebuild, and the library maps them onto an existing
+toolkit's native controls.
+
+- [MauiReactor](https://github.com/adospace/reactorui-maui) is the active example: an MVU framework
+  on top of .NET MAUI, where a component holds a state class and calls
+  `SetState(s => s.Counter++)` to re-render. It is maintained, has hot reload, and has a sizeable
+  community (around 870 GitHub stars).
+- [Comet](https://github.com/dotnet/Comet), the MVU toolkit based on .NET MAUI, was archived in July
+  2025.
+- [Fabulous](https://github.com/fabulous-dev/Fabulous.MauiControls) offers the same MVU style for F#.
+
+**What you get:** a code-first, reactive way to write MAUI apps. If what you liked about Flutter was
+"no XAML, UI as code, rebuild on state change", this delivers it today.
+
+**What it costs:** underneath, it is MAUI. Layout, rendering, controls and platform differences are
+MAUI's. Flutter's widget catalog, its layout protocol and its rendering behaviour don't come along,
+so a Flutter widget doesn't port. You rewrite it against MAUI controls.
+
+## 4. Port Flutter's framework itself
+
+The fourth idea is the one Plumix takes: port Flutter's framework layer to C# file by file, and let
+a .NET UI toolkit play the role of the Flutter engine.
+
+In Plumix, `Widget`, `Element` and `RenderObject` are the real thing: the same responsibilities,
+the same lifecycle, mostly the same names. The render tree does its own layout, painting and hit
+testing. [Avalonia](https://avaloniaui.net) supplies only what a Flutter engine embedder would:
+windows, input, a drawing surface and platform services. Every framework file names the Dart file it
+ports, and the Material and Cupertino libraries are strict ports as well. You can see the result in
+the [controls catalog](/controls).
+
+**What you get:** Flutter's architecture and widget catalog in C#. Porting a Flutter widget becomes
+mostly mechanical. [Porting a widget, line by line](/blog/port-flutter-widget-to-csharp) walks
+through two real examples. You also keep full access to .NET libraries, hot reload with
+`dotnet watch`, and F# support through `Plumix.FSharp`.
+
+**What it costs:** Plumix is in beta (0.4). The API keeps changing, deliberately towards Flutter,
+until the 1.0 release candidate freezes it. Desktop is the most mature host. Android, iOS and the
+browser run the same widget tree, but cross-host stability is the current milestone. The package
+ecosystem is young: ports of `provider`, `bloc` and `slang` exist, while most of pub.dev doesn't.
+
+**Status:** active, released on [NuGet](https://www.nuget.org/packages/Plumix/); the roadmap is
+public in the
+[framework plan](https://github.com/Plumix-Net/Plumix/blob/main/docs/FRAMEWORK_PLAN.md).
+
+## Side by side
+
+| | UI written in | Who renders | Flutter widget code ports? | Status, Oct 2026 |
+|---|---|---|---|---|
+| FlutterSharp | C# (remote) | Flutter (Dart client) | Only via the client | Archived |
+| xamarin.flutter | C# (generated) | SkiaSharp | Generated | Archived |
+| MauiReactor | C# (MVU) | .NET MAUI native controls | No — rewrite for MAUI | Active |
+| Comet | C# (MVU) | .NET MAUI | No | Archived |
+| Plumix | C# or F# | Plumix render tree on Avalonia | Yes, mostly mechanically | Active, beta |
+
+## Which one fits
+
+- **You want a code-first way to build MAUI apps** and don't need Flutter's widgets or rendering:
+  MauiReactor is the mature choice.
+- **You want Flutter's own UI and are fine keeping it in Dart:** use Flutter, and connect it to your
+  .NET backend over HTTP or gRPC. That is still the lowest-risk way to get Flutter itself.
+- **You want Flutter's architecture and widgets, in C#:** that is what Plumix is for, especially if
+  you want to port existing Flutter widgets or share a mental model between a Flutter team and a
+  .NET team.
+- **You just want cross-platform C# UI** without the Flutter part: Avalonia, Uno Platform and
+  .NET MAUI are the established options, each with its own strengths.
+
+If the last-but-one bullet describes you, the [getting-started guide](/docs) takes a few minutes, and
+[the three trees, explained in C#](/blog/widget-element-renderobject-explained) shows how much of
+your Flutter knowledge carries over.

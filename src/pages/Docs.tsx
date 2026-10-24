@@ -6,13 +6,16 @@ import { Code, DocsLayout } from "@/components/site/DocsLayout";
 
 const setupCode = `dotnet new console -n HelloPlumix
 cd HelloPlumix
-dotnet add package Plumix
-dotnet add package Plumix.Material`;
+dotnet add package Plumix --prerelease
+dotnet add package Plumix.Material --prerelease
+dotnet add package Avalonia.Desktop`;
 
-const appCode = `using Plumix;
+const appCode = `using Avalonia;
+using Plumix;
 using Plumix.Material;
+using Plumix.Widgets;
 
-public sealed class App : StatelessWidget
+public sealed class HelloApp : StatelessWidget
 {
     public override Widget Build(BuildContext context)
     {
@@ -27,16 +30,27 @@ public sealed class App : StatelessWidget
     }
 }
 
+// The Avalonia application that hosts the widget tree.
+public sealed class App : PlumixApplication
+{
+    protected override Widget CreateRootWidget() => new HelloApp();
+
+    protected override PlumixOptions CreateOptions() => new() { Title = "Hello, Plumix" };
+}
+
 public static class Program
 {
-    public static void Main() => PlumixHost.Run(new App());
+    [STAThread]
+    public static void Main(string[] args) => AppBuilder.Configure<App>()
+        .UsePlatformDetect()
+        .StartWithClassicDesktopLifetime(args);
 }`;
 
 const Docs = () => {
   return (
     <DocsLayout
       path="/docs"
-      title="Getting started"
+      title="Getting started with Plumix"
       intro={
         <>
           Plumix is a Flutter-faithful UI framework for .NET. This guide takes you from{" "}
@@ -76,8 +90,9 @@ const Docs = () => {
         <Wrench className="h-5 w-5 text-primary-glow" /> Installation
       </h2>
       <p className="mt-3 text-muted-foreground">
-        Plumix targets <Code>net8.0</Code> and later, on Windows, macOS and Linux. Create a console
-        app and add the packages:
+        Plumix targets <Code>net10.0</Code>, so you need the .NET 10 SDK. Create a console app and
+        add the packages — they are in beta, hence <Code>--prerelease</Code>.{" "}
+        <Code>Avalonia.Desktop</Code> provides the window on Windows, macOS and Linux:
       </p>
       <div className="mt-4">
         <CodeBlock code={setupCode} language="bash" filename="terminal" />
@@ -96,8 +111,9 @@ const Docs = () => {
         <Boxes className="h-5 w-5 text-primary-glow" /> Your first app
       </h2>
       <p className="mt-3 text-muted-foreground">
-        Compose a simple Material scaffold. <Code>PlumixHost.Run</Code> bootstraps the Avalonia
-        surface and mounts the widget tree.
+        Compose a simple Material scaffold, then hand it to a <Code>PlumixApplication</Code>: an
+        Avalonia application whose only job is to create the root widget. Avalonia's{" "}
+        <Code>AppBuilder</Code> opens the window, and Plumix mounts the widget tree into it.
       </p>
       <div className="mt-4">
         <CodeBlock code={appCode} language="csharp" filename="Program.cs" />
@@ -106,6 +122,20 @@ const Docs = () => {
         Run it with <Code>dotnet watch</Code> rather than <Code>dotnet run</Code>. Hot reload
         preserves <Code>State</Code> across edits, so counters and scroll positions survive while the
         widget tree rebuilds — the workflow Flutter developers expect.
+      </p>
+      <p className="mt-3 text-muted-foreground">
+        The same widget tree runs on mobile and in the browser: <Code>Plumix.Android</Code> ships{" "}
+        <Code>PlumixMainActivity</Code> for Android, and the repository contains iOS and WebAssembly
+        sample hosts. These hosts are in beta — cross-host stability is the current milestone on the{" "}
+        <a
+          href="https://github.com/Plumix-Net/Plumix/blob/main/docs/FRAMEWORK_PLAN.md"
+          className="text-primary-glow hover:text-primary"
+          target="_blank"
+          rel="noreferrer"
+        >
+          roadmap
+        </a>
+        .
       </p>
 
       <h2 id="next" className="mt-12 scroll-mt-24 text-2xl font-semibold">

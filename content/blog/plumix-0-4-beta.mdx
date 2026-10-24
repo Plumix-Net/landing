@@ -1,0 +1,98 @@
+Plumix started as an experiment: what if Flutter's architecture — not a look-alike, the actual
+`Widget` → `Element` → `RenderObject` pipeline — ran on .NET? With 0.4 the experiment becomes a
+beta. The framework layer, the Material library and now the Cupertino library are strict ports of
+Flutter 3.47, and the same widget tree runs on desktop, Android, iOS and in the browser.
+
+This post is the human-readable summary. The full list, with the Dart source of every port and every
+breaking change by name, is in the [changelog](/changelog).
+
+## The Cupertino library, ported
+
+Every file in Flutter's `cupertino_ui` package now has a C# counterpart in `Plumix.Cupertino`:
+
+- `CupertinoApp`, the Cupertino theme, colours and text theme, with dynamic colours resolved for
+  light, dark and high-contrast modes;
+- page and tab scaffolds, large-title navigation bars, iOS page routes with the swipe-back gesture,
+  and sheets;
+- wheel pickers (`CupertinoPicker`, `CupertinoDatePicker`, `CupertinoTimerPicker`), text fields
+  with iOS selection handles, segmented controls and the pull-to-refresh control;
+- list sections and tiles, context menus, the menu anchor, action sheets and alert dialogs;
+- the icon set and localizations for 116 locales.
+
+The milestone stays open for its last exit criteria: auditing that every Material `.Adaptive` factory
+composes the Cupertino widget the way Flutter does, and running the sample gallery's Cupertino tab
+through `CupertinoApp` on every host. The [Cupertino catalog](/controls/cupertino) lists the main
+widgets.
+
+## Hosts are now engine embedders
+
+The biggest change is one you don't see in widget code. A Plumix host used to lay out and paint the
+render tree itself; now it behaves like a Flutter engine embedder. The framework builds retained
+`Scene`s through `SceneBuilder`, and the host only rasterizes what `FlutterView.Render` hands it.
+Pointer data, metrics, locales, accessibility and key events arrive through `PlatformDispatcher`,
+and text input, key events and platform calls go over the same `flutter/textinput`,
+`flutter/keyevent` and `flutter/platform` channels a Flutter engine uses.
+
+That boundary is what makes more hosts cheap. 0.4 ships:
+
+- **Desktop** — Windows, macOS and Linux through Avalonia, the most mature host;
+- **Android** — the new `Plumix.Android` package, with `PlumixMainActivity` and the system back
+  button routed to `WidgetsApp`;
+- **iOS** and **browser (WebAssembly)** sample hosts in the repository.
+
+Cross-host stability is the current milestone. The main open item on iOS is an ahead-of-time
+compilation crash that has to be fixed before a release candidate.
+
+## A dart:ui surface underneath
+
+To port Flutter code faithfully you need Flutter's lower layers, not just its widgets. 0.4 adds a
+`dart:ui`-shaped API: `Canvas`, `Picture` and `Paint` with blend modes and mask filters, Flutter's own
+`Color` type, native `Path` geometry and metrics, and a `Paragraph` with SkParagraph-compatible
+metrics. Anti-aliasing for rounded rectangles and paths now matches Skia exactly — the precondition
+for comparing every sample screen against a capture of the same screen in real Flutter.
+
+## Material, re-ported strictly
+
+Every Material widget family was ported by August; this release re-ports buttons and `ButtonStyle`, `Switch`,
+sliders, ink features, `Scaffold`, `AppBar`, the date and time pickers, `TextField` and
+`InputDecorator`, `ThemeData` and more against the pinned Flutter source. Two large tables come
+along: the 8,825-icon `Icons` catalog and `GlobalMaterialLocalizations` for 119 locales.
+
+## Testing like Flutter does
+
+`FrameworkDartTester` brings flutter_test's finders, matchers and `TestTextInput` to C#, so Flutter's
+own widget tests can be ported per subsystem. The suite runs green in Debug, Profile and Release, and
+CI also runs it against the newest Avalonia release of the supported major version.
+
+## Breaking changes
+
+This is a beta, and it breaks things on purpose — almost always to move closer to Flutter. The
+largest groups:
+
+- **Hosts**: Avalonia 12.1.4 is the minimum; `PlumixHost` no longer lays out or paints, it rasterizes
+  scenes; hosts speak the Flutter channels instead of custom key and text-input types.
+- **Painting**: the framework `Color` replaces Avalonia's `Color` in every API; `Matrix4` replaces
+  the affine pipeline; text styles and paragraphs follow Dart's types.
+- **Material and Cupertino**: many controls were re-ported strictly, and parameters that don't exist
+  in Flutter are gone.
+
+Each one is listed by name in the [changelog](/changelog).
+
+## Try it
+
+```bash
+dotnet add package Plumix --prerelease
+dotnet add package Plumix.Material --prerelease
+```
+
+The [getting-started guide](/docs) builds a first app in a few minutes. If you're coming from
+Flutter, [porting a widget line by line](/blog/port-flutter-widget-to-csharp) shows how directly the
+code translates.
+
+## What's next
+
+The road to `1.0.0-rc.1` is public in the
+[framework plan](https://github.com/Plumix-Net/Plumix/blob/main/docs/FRAMEWORK_PLAN.md). The release
+candidate freezes the public API, and it needs three things first: the Cupertino milestone's last
+exit criteria, Android and iOS hosts building cleanly with the iOS crash fixed, and every sample
+route matching its Flutter screenshot or documenting why not.
