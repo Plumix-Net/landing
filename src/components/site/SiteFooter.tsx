@@ -4,7 +4,7 @@ import { Github } from "lucide-react";
 export const SiteFooter = () => {
   return (
     <footer className="border-t border-border bg-background/40 mt-24">
-      <div className="container py-12 grid gap-10 md:grid-cols-5">
+      <div className="container py-12 grid gap-10 md:grid-cols-6">
         <div className="md:col-span-2">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="h-8 w-8 overflow-hidden rounded-lg ring-1 ring-border">
@@ -42,6 +42,16 @@ export const SiteFooter = () => {
             <li><Link to="/controls/core" className="hover:text-foreground">Core widgets</Link></li>
             <li><Link to="/controls/material" className="hover:text-foreground">Material controls</Link></li>
             <li><Link to="/controls/cupertino" className="hover:text-foreground">Cupertino controls</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold mb-3">NetBench</h4>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/netbench" className="hover:text-foreground">About the app</Link></li>
+            <li><a href="/netbench#support" className="hover:text-foreground">Support</a></li>
+            <li><Link to="/netbench/privacy" className="hover:text-foreground">Privacy policy</Link></li>
+            <li><Link to="/netbench/terms" className="hover:text-foreground">Terms of use</Link></li>
           </ul>
         </div>
 

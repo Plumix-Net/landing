@@ -294,6 +294,63 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
       ]),
     ],
   }),
+
+  "/netbench": route({
+    path: "/netbench",
+    title: "NetBench — HTTP load testing app for Android, iOS and desktop",
+    description:
+      "NetBench is an HTTP load-testing app built in C# with Plumix: hundreds of concurrent users, live RPS, p50/p95/p99 latency and error rate on your phone or desktop.",
+    sitemap: { priority: 0.9, changefreq: "monthly" },
+    jsonLd: [
+      breadcrumb([
+        { name: "Home", path: "/" },
+        { name: "NetBench", path: "/netbench" },
+      ]),
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${SITE_URL}/netbench#app`,
+        name: "NetBench",
+        description:
+          "HTTP load-testing tool with live throughput, latency percentiles and error rate — a showcase app for the Plumix UI framework.",
+        url: absoluteUrl("/netbench"),
+        applicationCategory: "DeveloperApplication",
+        operatingSystem: "Android, iOS, Windows, macOS, Linux",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        sameAs: ["https://github.com/Plumix-Net/NetBench"],
+      },
+    ],
+  }),
+
+  "/netbench/privacy": route({
+    path: "/netbench/privacy",
+    title: "NetBench privacy policy",
+    description:
+      "NetBench collects no personal data: no account, analytics or ads. Scenarios and reports stay on your device; requests go only to the targets you configure.",
+    sitemap: { priority: 0.3, changefreq: "yearly" },
+    jsonLd: [
+      breadcrumb([
+        { name: "Home", path: "/" },
+        { name: "NetBench", path: "/netbench" },
+        { name: "Privacy policy", path: "/netbench/privacy" },
+      ]),
+    ],
+  }),
+
+  "/netbench/terms": route({
+    path: "/netbench/terms",
+    title: "NetBench terms of use",
+    description:
+      "Terms of use for the NetBench load-testing app: test only systems you own or are authorised to test, your responsibility for traffic and costs, no warranty.",
+    sitemap: { priority: 0.3, changefreq: "yearly" },
+    jsonLd: [
+      breadcrumb([
+        { name: "Home", path: "/" },
+        { name: "NetBench", path: "/netbench" },
+        { name: "Terms of use", path: "/netbench/terms" },
+      ]),
+    ],
+  }),
 };
 
 export const NOT_FOUND_SEO: RouteSeo = route({

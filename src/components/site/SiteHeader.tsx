@@ -8,6 +8,7 @@ const links = [
   { to: "/docs", label: "Docs" },
   { to: "/controls", label: "Controls" },
   { to: "/changelog", label: "Changelog" },
+  { to: "/netbench", label: "NetBench" },
 ];
 
 export const SiteHeader = () => {

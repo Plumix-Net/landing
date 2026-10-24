@@ -6,6 +6,9 @@ import DocsState from "./pages/DocsState.tsx";
 import DocsLayoutProtocol from "./pages/DocsLayoutProtocol.tsx";
 import Controls from "./pages/Controls.tsx";
 import Changelog from "./pages/Changelog.tsx";
+import NetBench from "./pages/NetBench.tsx";
+import NetBenchPrivacy from "./pages/NetBenchPrivacy.tsx";
+import NetBenchTerms from "./pages/NetBenchTerms.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 /**
@@ -24,6 +27,9 @@ export const AppRoutes = () => (
     <Route path="/controls" element={<Controls />} />
     <Route path="/controls/:category" element={<Controls />} />
     <Route path="/changelog" element={<Changelog />} />
+    <Route path="/netbench" element={<NetBench />} />
+    <Route path="/netbench/privacy" element={<NetBenchPrivacy />} />
+    <Route path="/netbench/terms" element={<NetBenchTerms />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>
