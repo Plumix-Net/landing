@@ -45,7 +45,7 @@ const NetBenchPrivacy = () => (
           scenario the run was made with.
         </li>
         <li>
-          <strong>Settings</strong>: theme and interface language.
+          <strong>Settings</strong>: theme, interface language and that you confirmed you test only your own servers.
         </li>
       </ul>
       <p>
@@ -71,9 +71,10 @@ const NetBenchPrivacy = () => (
 
     <LegalSection title="Exporting and sharing">
       <p>
-        On mobile, <strong>Share report</strong> copies a text summary of a run to the clipboard; on the
-        desktop you can export a report to a JSON, CSV or HTML file in a location you pick. Both happen
-        only when you ask for them, and what you do with the copied text or file afterwards is up to you.
+        On mobile, <strong>Share report</strong> opens your device's share sheet with a text summary
+        of a run or a JSON, CSV or HTML report file; on the desktop you can export a report to a JSON,
+        CSV or HTML file in a location you pick. Both happen only when you ask for them, and what you do
+        with the shared text or file afterwards is up to you.
       </p>
     </LegalSection>
 
@@ -87,6 +88,10 @@ const NetBenchPrivacy = () => (
           <strong>Unencrypted (http://) connections</strong> — allowed on Android and iOS so you can test
           local and staging servers. NetBench uses them only for targets you enter with an{" "}
           <code className="font-mono text-foreground">http://</code> address.
+        </li>
+        <li>
+          <strong>Local network (iOS)</strong> — iOS asks for it the first time you test an address on
+          your local network. NetBench uses it only to reach the targets you enter.
         </li>
       </ul>
     </LegalSection>
