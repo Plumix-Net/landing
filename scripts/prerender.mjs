@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Bakes every route into a static HTML file so the site needs nothing but plain
- * shared hosting — no Node process, no VPS. `dist/` is uploaded over FTP as-is.
+ * Bakes every route into a static HTML file so the site needs nothing but static
+ * hosting — no Node process, no VPS. `dist/` is uploaded to Cloudflare Pages as-is
+ * (.github/workflows/deploy-release-cloudflare.yml).
  *
  * Pipeline:
  *   1. vite build              → dist/ (client bundle + index.html template)

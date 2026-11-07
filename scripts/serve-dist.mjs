@@ -3,9 +3,11 @@
  * Local preview of the deployed site.
  *
  * `vite preview` falls back to index.html for unknown paths, which hides exactly
- * the behaviour we care about. This server mirrors public/.htaccess instead:
+ * the behaviour we care about. This server mirrors Cloudflare Pages instead:
  * try the file, then <path>.html, then 404.html with a real 404 status — so what
- * you see here is what Beget will serve.
+ * you see here is what plumix.net will serve. (Pages answers the redirects with
+ * 308 and also sends the headers from public/_headers; for an exact check run
+ * `npx wrangler pages dev dist`.)
  */
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { createServer } from "node:http";
@@ -41,7 +43,7 @@ createServer((req, res) => {
   const url = new URL(req.url, "http://localhost");
   let pathname = decodeURIComponent(url.pathname);
 
-  // Trailing slash → canonical extensionless URL (301), as in .htaccess.
+  // Trailing slash → canonical extensionless URL, as Cloudflare Pages does.
   if (pathname.length > 1 && pathname.endsWith("/")) {
     res.writeHead(301, { Location: pathname.replace(/\/+$/, "") });
     return res.end();
@@ -55,5 +57,5 @@ createServer((req, res) => {
 
   return send(res, 404, join(DIST, "404.html"));
 }).listen(PORT, () => {
-  console.log(`dist/ served with .htaccess semantics on http://localhost:${PORT}`);
+  console.log(`dist/ served with Cloudflare Pages semantics on http://localhost:${PORT}`);
 });

@@ -25,3 +25,6 @@ dist-ssr
 
 # TypeScript incremental build metadata
 *.tsbuildinfo
+
+# Wrangler local state
+.wrangler

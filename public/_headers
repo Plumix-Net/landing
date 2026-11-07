@@ -1,0 +1,23 @@
+# Cloudflare Pages response headers (replaces the Apache .htaccess used on Beget).
+# Pages already: compresses, serves /docs from docs.html, 308s /docs.html and
+# /docs/ to /docs, answers unknown paths with 404.html and a real 404, and gives
+# HTML "max-age=0, must-revalidate" so a deploy is picked up immediately.
+
+/*
+  X-Content-Type-Options: nosniff
+
+# Vite fingerprints everything under /assets, so a changed file always has a new URL.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Blog Open Graph cards and site images: not fingerprinted, a month is enough.
+/blog/og/*
+  Cache-Control: public, max-age=2592000
+
+# Keep the *.pages.dev mirrors (production and per-deploy previews) out of the index;
+# only https://plumix.net is canonical.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
