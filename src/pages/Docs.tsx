@@ -138,9 +138,7 @@ const Docs = () => {
       </p>
       <p className="mt-3 text-muted-foreground">
         The Android and iOS hosts are ports of Flutter's engine embeddings — text input, keyboard,
-        accessibility, platform channels, state restoration — without Avalonia.{" "}
-        <Code>Plumix.Avalonia.Android</Code> still provides an Avalonia-based Android host for apps
-        that need it.
+        accessibility, platform channels, state restoration — without Avalonia.
       </p>
 
       <h2 id="next" className="mt-12 scroll-mt-24 text-2xl font-semibold">
