@@ -63,8 +63,9 @@ a .NET UI toolkit play the role of the Flutter engine.
 
 In Plumix, `Widget`, `Element` and `RenderObject` are the real thing: the same responsibilities,
 the same lifecycle, mostly the same names. The render tree does its own layout, painting and hit
-testing. [Avalonia](https://avaloniaui.net) supplies only what a Flutter engine embedder would:
-windows, input, a drawing surface and platform services. Every framework file names the Dart file it
+testing. The host supplies only what a Flutter engine embedder would: windows, input, a drawing
+surface and platform services. On Android and iOS that is Plumix's own host, which renders through
+Impeller like Flutter's engine; on desktop and in the browser it is [Avalonia](https://avaloniaui.net). Every framework file names the Dart file it
 ports, and the Material and Cupertino libraries are strict ports as well. You can see the result in
 the [controls catalog](/controls).
 
@@ -73,9 +74,10 @@ mostly mechanical. [Porting a widget, line by line](/blog/port-flutter-widget-to
 through two real examples. You also keep full access to .NET libraries, hot reload with
 `dotnet watch`, and F# support through `Plumix.FSharp`.
 
-**What it costs:** Plumix is in beta (0.4). The API keeps changing, deliberately towards Flutter,
-until the 1.0 release candidate freezes it. Desktop is the most mature host. Android, iOS and the
-browser run the same widget tree, but cross-host stability is the current milestone. The package
+**What it costs:** Plumix 1.0 is in preview. The API can still change, deliberately towards
+Flutter, until the 1.0 release candidate freezes it. The same widget tree runs on Android, iOS,
+desktop and the browser, and `dotnet new plumix-app` sets up all of them;
+[NetBench](/netbench), an app built on the previews, ships on the App Store. The package
 ecosystem is young: ports of `provider`, `bloc` and `slang` exist, while most of pub.dev doesn't.
 
 **Status:** active, released on [NuGet](https://www.nuget.org/packages/Plumix/); the roadmap is
@@ -84,13 +86,13 @@ public in the
 
 ## Side by side
 
-| | UI written in | Who renders | Flutter widget code ports? | Status, Oct 2026 |
+| | UI written in | Who renders | Flutter widget code ports? | Status, Nov 2026 |
 |---|---|---|---|---|
 | FlutterSharp | C# (remote) | Flutter (Dart client) | Only via the client | Archived |
 | xamarin.flutter | C# (generated) | SkiaSharp | Generated | Archived |
 | MauiReactor | C# (MVU) | .NET MAUI native controls | No — rewrite for MAUI | Active |
 | Comet | C# (MVU) | .NET MAUI | No | Archived |
-| Plumix | C# or F# | Plumix render tree on Avalonia | Yes, mostly mechanically | Active, beta |
+| Plumix | C# or F# | Plumix render tree (Impeller on mobile, Avalonia on desktop) | Yes, mostly mechanically | Active, 1.0 preview |
 
 ## Which one fits
 

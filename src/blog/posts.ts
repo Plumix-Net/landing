@@ -28,6 +28,7 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "Plumix 0.4 is the first beta: strict ports of Flutter 3.47's framework, Material and Cupertino libraries, plus Android, iOS and browser hosts.",
     date: "2026-10-24",
+    updated: "2026-11-23",
     tags: ["release"],
     minutes: 5,
   },
@@ -37,6 +38,7 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "Can you write Flutter in C#? A survey of every route in 2026 — Flet bridges, transpilers, MVU libraries and Plumix — and what each one really gives you.",
     date: "2026-10-24",
+    updated: "2026-11-23",
     tags: ["flutter", "dotnet", "comparison"],
     minutes: 8,
   },
@@ -46,6 +48,7 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "Two real Flutter widgets — Spacer and Placeholder — ported from Dart to C# with Plumix, and the translation rules that cover most other widgets.",
     date: "2026-10-24",
+    updated: "2026-11-23",
     tags: ["flutter", "porting", "tutorial"],
     minutes: 9,
   },
@@ -55,6 +58,7 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "What the widget, element and render trees each do, when an element is updated instead of recreated, and why keys matter — with runnable C# examples.",
     date: "2026-10-24",
+    updated: "2026-11-23",
     tags: ["flutter", "architecture"],
     minutes: 10,
   },

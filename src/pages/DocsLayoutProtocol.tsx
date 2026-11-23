@@ -7,7 +7,7 @@ const constraintsCode = `// RenderPadding.PerformLayout, as it ships in Plumix (
 protected override void PerformLayout()
 {
     BoxConstraints constraints = Constraints;
-    Thickness padding = ResolvedPadding;
+    EdgeInsets padding = ResolvedPadding;
     double horizontal = padding.Left + padding.Right;
     double vertical = padding.Top + padding.Bottom;
     if (Child == null)
@@ -19,7 +19,7 @@ protected override void PerformLayout()
     BoxConstraints innerConstraints = constraints.Deflate(padding);
     Child.Layout(innerConstraints, parentUsesSize: true);
     var childParentData = (BoxParentData)Child.parentData!;
-    childParentData.offset = new Point(padding.Left, padding.Top);
+    childParentData.offset = new Offset(padding.Left, padding.Top);
     Size = constraints.Constrain(
         new Size(horizontal + Child.Size.Width, vertical + Child.Size.Height));
 }`;

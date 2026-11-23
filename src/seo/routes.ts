@@ -10,6 +10,7 @@
  */
 
 import { BLOG_POSTS, type BlogPost } from "../blog/posts";
+import { NETBENCH_APP_STORE_URL, NETBENCH_RELEASES_URL } from "../netbench/app";
 
 export const SITE_URL = "https://plumix.net";
 export const GITHUB_URL = "https://github.com/Plumix-Net/Plumix";
@@ -84,7 +85,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is Plumix production ready?",
-    a: "Not yet. Plumix 1.0 is in preview (1.0.0-preview packages on NuGet). The framework core, rendering, gestures, navigation, scrolling and the Material library are strict ports of Flutter 3.47; the Cupertino port is in progress, and the next step is a v1.0 release candidate with an API freeze.",
+    a: "Not yet. Plumix 1.0 is in preview (1.0.0-preview packages on NuGet). The framework core, rendering, gestures, navigation, scrolling, and the Material and Cupertino libraries are strict ports of Flutter 3.47, and the native Android and iOS hosts have shipped. The next step is a v1.0 release candidate with an API freeze. NetBench, a load-testing app built on the previews, is on the App Store.",
   },
   {
     q: "Does Plumix support hot reload?",
@@ -340,7 +341,8 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
         operatingSystem: "Android, iOS, Windows, macOS, Linux",
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
         publisher: { "@id": `${SITE_URL}/#organization` },
-        sameAs: ["https://github.com/Plumix-Net/NetBench"],
+        downloadUrl: [NETBENCH_APP_STORE_URL, NETBENCH_RELEASES_URL],
+        sameAs: ["https://github.com/Plumix-Net/NetBench", NETBENCH_APP_STORE_URL],
       },
     ],
   }),

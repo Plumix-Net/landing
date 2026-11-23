@@ -2,7 +2,7 @@ Every Flutter explainer eventually says "Flutter has three trees". It's true, an
 thing to understand about the framework: it explains why rebuilding is cheap, where state lives and
 what keys are for. This post walks through the three trees with C# code, because Plumix ports them
 as they are. The class names, method names and decisions below are the same as in Flutter's
-`framework.dart`, and every snippet compiles against Plumix 0.4.
+`framework.dart`, and every snippet compiles against the Plumix 1.0 previews.
 
 ## Widgets: cheap, immutable descriptions
 
@@ -176,9 +176,9 @@ public sealed class RenderDot : RenderBox
         Size = Constraints.Constrain(new Size(_diameter, _diameter));
     }
 
-    public override void Paint(PaintingContext context, Point offset)
+    public override void Paint(PaintingContext context, Offset offset)
     {
-        Point center = offset + new Point(Size.Width / 2, Size.Height / 2);
+        Offset center = offset + new Offset(Size.Width / 2, Size.Height / 2);
         double radius = Math.Min(Size.Width, Size.Height) / 2;
         context.Canvas.DrawCircle(center, radius, new Paint { Color = _color });
     }

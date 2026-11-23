@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import {
   NETBENCH_CONTACT_EMAIL,
   NETBENCH_ISSUES_URL,
+  NETBENCH_RELEASES_URL,
   NETBENCH_REPO_URL,
   NETBENCH_STORES,
   StoreLink,
@@ -19,6 +20,7 @@ import {
   BellRing,
   CheckCircle2,
   Cpu,
+  Download,
   Gauge,
   GitCompare,
   Github,
@@ -150,13 +152,13 @@ const platforms = [
     icon: Smartphone,
     name: "Android & iOS",
     ui: "Plumix — Flutter-style widgets on its native hosts",
-    status: "Coming to the stores",
+    status: "App Store now · Google Play soon",
   },
   {
     icon: Monitor,
     name: "Windows, macOS, Linux",
-    ui: "Avalonia — XAML + MVVM",
-    status: "Build from source",
+    ui: "Avalonia — XAML + MVVM, Native AOT",
+    status: "Installers on GitHub Releases",
   },
   {
     icon: Globe,
@@ -333,6 +335,14 @@ const NetBench = () => {
                   className="inline-flex items-center gap-1.5 hover:text-foreground"
                 >
                   <Github className="h-4 w-4" /> Open source on GitHub
+                </a>
+                <a
+                  href={NETBENCH_RELEASES_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 hover:text-foreground"
+                >
+                  <Download className="h-4 w-4" /> Windows, macOS &amp; Linux builds
                 </a>
                 <span className="inline-flex items-center gap-1.5">
                   <Lock className="h-4 w-4" /> No account, no tracking

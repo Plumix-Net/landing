@@ -20,7 +20,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-const installCmd = "dotnet add package Plumix --prerelease";
+const installCmd = `dotnet new install Plumix.Templates
+dotnet new plumix-app -n HelloPlumix`;
 
 const exampleCode = `public sealed class MyApp : StatelessWidget
 {
@@ -92,8 +93,9 @@ const milestones = [
   { id: "M2", title: "Input / Focus / Accessibility", status: "done" },
   { id: "M3", title: "Port-first Widget Set Expansion", status: "done" },
   { id: "M4", title: "Material Library Rewrite", status: "done" },
-  { id: "M5", title: "Cross-host Sample Parity & Stability", status: "progress" },
-  { id: "M6", title: "Cupertino Library Port", status: "progress" },
+  { id: "M5", title: "Cross-host Sample Parity & Stability", status: "done" },
+  { id: "M6", title: "Cupertino Library Port", status: "done" },
+  { id: "Host", title: "Native Android & iOS hosts on Impeller, dotnet new template", status: "done" },
   { id: "RC", title: "v1.0 Release Candidate — API freeze", status: "planned" },
 ] as const;
 
@@ -370,7 +372,8 @@ const Index = () => {
           </span>
           <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">Current status</h2>
           <p className="mt-4 text-muted-foreground">
-            The public roadmap from core parity to a v1.0 release candidate.
+            The public roadmap from core parity to a v1.0 release candidate. Every milestone up to
+            the API freeze has shipped in the 1.0 previews.
           </p>
         </div>
         <ol className="mt-12 mx-auto max-w-3xl space-y-3">

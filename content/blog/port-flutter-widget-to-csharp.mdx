@@ -66,7 +66,7 @@ new Row(
     [
         new Text("Plumix"),
         new Spacer(),
-        new Text("v0.4"),
+        new Text("v1.0"),
     ]
 );
 ```
@@ -155,11 +155,11 @@ internal sealed class PlaceholderPainter : CustomPainter
 
     public override void Paint(PaintingContext context, Size size)
     {
-        var pen = new Pen(new SolidColorBrush(Color), StrokeWidth);
-        var rect = new Rect(size);
-        context.Canvas.DrawRectangle(Brushes.Transparent, pen, rect);
-        context.Canvas.DrawLine(pen, rect.TopRight, rect.BottomLeft);
-        context.Canvas.DrawLine(pen, rect.TopLeft, rect.BottomRight);
+        var paint = new Paint { Color = Color, Style = PaintingStyle.Stroke, StrokeWidth = StrokeWidth };
+        var rect = Offset.Zero & size;
+        context.Canvas.DrawRect(rect, paint);
+        context.Canvas.DrawLine(rect.TopRight, rect.BottomLeft, paint);
+        context.Canvas.DrawLine(rect.TopLeft, rect.BottomRight, paint);
     }
 
     public override bool ShouldRepaint(CustomPainter oldDelegate)
@@ -169,7 +169,7 @@ internal sealed class PlaceholderPainter : CustomPainter
                || oldPainter.StrokeWidth != StrokeWidth;
     }
 
-    public override bool? HitTest(Point position) => false;
+    public override bool? HitTest(Offset position) => false;
 }
 
 public sealed class Placeholder : StatelessWidget
@@ -222,10 +222,10 @@ parameters in the same places. The differences come from C#, plus one deliberate
   `_PlaceholderPainter`. C# requires the base signature, so the port takes a `CustomPainter` and
   pattern-matches. The result is the same comparison of colour and stroke width.
 - **Named constants become expressions.** `Size.infinite` is spelled out as an infinite `Size`.
-- **Painting.** Here the port diverges on purpose. In Plumix, `CustomPainter.Paint` receives the
-  `PaintingContext` rather than the bare `Canvas`, and this painter draws with a pen instead of a
-  `Paint` and a `Path`. The rectangle and two diagonals are the same either way. The divergence is
-  recorded in the repository's divergence table rather than hidden.
+- **Painting.** `Paint`, `PaintingStyle`, `Offset.zero & size` and the `Canvas` calls keep their
+  Dart names. In Plumix, `CustomPainter.Paint` receives the `PaintingContext` rather than the bare
+  `Canvas`, and this painter draws the rectangle and the two diagonals as three calls instead of one
+  `Path`. The pixels are the same.
 
 ## The rules that cover most widgets
 
