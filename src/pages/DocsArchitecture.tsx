@@ -110,14 +110,15 @@ const DocsArchitecture = () => {
       </p>
 
       <h2 id="render-objects" className="mt-12 scroll-mt-24 text-2xl font-semibold">
-        Where Avalonia fits
+        Where the host fits
       </h2>
       <p className="mt-3 text-muted-foreground leading-relaxed">
-        Avalonia is used as infrastructure, not as a UI layer. It supplies the window, the platform
-        lifecycle, raw input events and a GPU-backed drawing surface. Once a frame begins, the
-        measure, arrange and paint decisions are made entirely by Plumix render objects — so a
-        control ported from Flutter lays out the way its Flutter original does, not the way an
-        equivalent Avalonia control would.
+        The host is infrastructure, not a UI layer: Plumix's native hosts on Android and iOS, which
+        render through Impeller as Flutter's engine does, and Avalonia on desktop and in the
+        browser. It supplies the window or view, the platform lifecycle, raw input events and a
+        GPU-backed drawing surface. Once a frame begins, the measure, arrange and paint decisions
+        are made entirely by Plumix render objects — so a control ported from Flutter lays out the
+        way its Flutter original does, whichever host draws it.
       </p>
       <p className="mt-3 text-muted-foreground leading-relaxed">
         Continue with the{" "}

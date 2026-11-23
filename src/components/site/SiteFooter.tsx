@@ -80,7 +80,7 @@ export const SiteFooter = () => {
       <div className="border-t border-border">
         <div className="container py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} Plumix-Net. MIT-licensed open source.</span>
-          <span className="font-mono">Built with C# · Avalonia infrastructure</span>
+          <span className="font-mono">Built with C# · Impeller on mobile · Avalonia on desktop</span>
         </div>
       </div>
     </footer>

@@ -54,8 +54,8 @@ const features = [
   },
   {
     icon: Cpu,
-    title: "Avalonia as infrastructure",
-    desc: "Avalonia handles the window, input, and drawing surface. All layout and paint logic lives in Plumix.",
+    title: "Thin hosts, framework-owned UI",
+    desc: "Android and iOS run on Plumix's own hosts, rendering through Impeller like Flutter's engine; desktop and browser on Avalonia. All layout and paint logic lives in Plumix.",
   },
   {
     icon: ShieldCheck,
@@ -77,8 +77,8 @@ const philosophy = [
   },
   {
     n: "03",
-    title: "Avalonia as infrastructure, not UI",
-    body: "Avalonia provides the host, platform lifecycle, and rendering surface. All layout and paint behavior is framework-owned.",
+    title: "Hosts as infrastructure, not UI",
+    body: "A host provides the surface, platform lifecycle and input: Plumix's native Impeller hosts on Android and iOS, Avalonia on desktop and in the browser. All layout and paint behavior is framework-owned.",
   },
   {
     n: "04",
@@ -115,13 +115,15 @@ const packages = [
   },
   {
     name: "Plumix.Android",
-    desc: "Android host — PlumixMainActivity runs your widget tree as a native Android app, system back button included.",
+    desc: "Native Android host — PlumixActivity renders through Impeller and ports the Flutter engine's Android embedding: text input, accessibility, predictive back.",
     href: "https://www.nuget.org/packages/Plumix.Android/",
   },
 ];
 
 /** Smaller packages, listed under the main cards. */
 const extraPackages = [
+  { name: "Plumix.iOS", note: "native iOS host", href: "https://www.nuget.org/packages/Plumix.iOS/" },
+  { name: "Plumix.Templates", note: "dotnet new plumix-app", href: "https://www.nuget.org/packages/Plumix.Templates/" },
   { name: "Plumix.FSharp", note: "F# widget DSL", href: "https://www.nuget.org/packages/Plumix.FSharp/" },
   { name: "Plumix.Elmish", note: "Elmish (MVU) host", href: "https://www.nuget.org/packages/Plumix.Elmish/" },
   { name: "Plumix.Provider", note: "port of provider", href: "https://www.nuget.org/packages/Plumix.Provider/" },
@@ -160,11 +162,11 @@ const Index = () => {
         <div className="container relative pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="mx-auto max-w-3xl text-center animate-fade-up">
             <Link
-              to="/blog/plumix-0-4-beta"
+              to="/changelog"
               className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/40 px-3 py-1 text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary-glow" />
-              v{PLUMIX_VERSION} · Cupertino port, Android &amp; iOS hosts — October 2026
+              v{PLUMIX_VERSION} · Native Android &amp; iOS hosts, dotnet new template — November 2026
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
 

@@ -133,7 +133,7 @@ const whyCSharp = [
   {
     icon: Cpu,
     title: "Native performance on mobile",
-    desc: "NetBench runs on .NET 10 on the device itself, not in a web view and not through a remote agent. JSON is source-generated, so the app trims cleanly and starts fast, and the same profiling tools you use for backend .NET code work here too.",
+    desc: "NetBench runs on .NET 11 on the device itself, not in a web view and not through a remote agent. JSON is source-generated, so the app trims cleanly and starts fast, and the same profiling tools you use for backend .NET code work here too.",
   },
 ];
 
@@ -149,7 +149,7 @@ const platforms = [
   {
     icon: Smartphone,
     name: "Android & iOS",
-    ui: "Plumix — Flutter-style widgets in C#",
+    ui: "Plumix — Flutter-style widgets on its native hosts",
     status: "Coming to the stores",
   },
   {

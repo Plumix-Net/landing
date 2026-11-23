@@ -14,7 +14,7 @@ import { BLOG_POSTS, type BlogPost } from "../blog/posts";
 export const SITE_URL = "https://plumix.net";
 export const GITHUB_URL = "https://github.com/Plumix-Net/Plumix";
 /** Latest Plumix release on NuGet. Bump together with the hero badge on the homepage. */
-export const PLUMIX_VERSION = "0.4.0-beta.3";
+export const PLUMIX_VERSION = "1.0.0-preview.9";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 export const DEFAULT_OG_IMAGE_ALT =
   "Plumix — Flutter's Widget, Element and RenderObject architecture in C#";
@@ -68,7 +68,7 @@ const breadcrumb = (trail: { name: string; path: string }[]) => ({
 export const FAQ: { q: string; a: string }[] = [
   {
     q: "How is Plumix different from Avalonia?",
-    a: "Plumix is not a wrapper over Avalonia's control set. Avalonia supplies the window, platform lifecycle, input plumbing and drawing surface; every layout, paint and hit-test decision above that surface is made by Plumix's own render tree. You write Flutter-style widgets, not XAML.",
+    a: "Plumix is not a wrapper over Avalonia's control set. On desktop and in the browser Avalonia supplies the window, platform lifecycle, input plumbing and drawing surface; on Android and iOS Plumix runs on its own hosts without Avalonia. Either way, every layout, paint and hit-test decision is made by Plumix's own render tree. You write Flutter-style widgets, not XAML.",
   },
   {
     q: "Do I need to know Flutter to use Plumix?",
@@ -80,11 +80,11 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Which platforms does Plumix support?",
-    a: "Windows, macOS and Linux through the Avalonia desktop host, which is the most mature. Android (the Plumix.Android package), iOS and the browser (WebAssembly) hosts run the same widget tree; cross-host stability is the current milestone. The framework targets .NET 10.",
+    a: "Android (Plumix.Android) and iOS (Plumix.iOS) run on Plumix's native hosts, which render through Impeller and port the Flutter engine's embeddings. Windows, macOS and Linux run on the Avalonia desktop host, and the browser on Avalonia's WebAssembly host. The same widget tree runs everywhere; `dotnet new plumix-app` creates a project for all three. The framework targets .NET 11.",
   },
   {
     q: "Is Plumix production ready?",
-    a: "Not yet. Plumix is in beta (v0.4). The framework core, rendering, gestures, navigation, scrolling and the Material library are strict ports of Flutter 3.47; the Cupertino port and cross-host stability are in progress, and the next step is a v1.0 release candidate with an API freeze.",
+    a: "Not yet. Plumix 1.0 is in preview (1.0.0-preview packages on NuGet). The framework core, rendering, gestures, navigation, scrolling and the Material library are strict ports of Flutter 3.47; the Cupertino port is in progress, and the next step is a v1.0 release candidate with an API freeze.",
   },
   {
     q: "Does Plumix support hot reload?",
@@ -137,10 +137,10 @@ const techArticle = (path: string, headline: string, description: string) => ({
 export const ROUTE_SEO: Record<string, RouteSeo> = {
   "/": route({
     path: "/",
-    updated: "2026-10-24",
+    updated: "2026-11-23",
     title: "Plumix — Flutter-like UI framework for C#",
     description:
-      "Plumix brings Flutter's Widget → Element → RenderObject architecture to .NET 10. Build desktop and mobile UIs in C# with the same mental model as Flutter.",
+      "Plumix brings Flutter's Widget → Element → RenderObject architecture to .NET 11. Build desktop and mobile UIs in C# with the same mental model as Flutter.",
     sitemap: { priority: 1.0, changefreq: "weekly" },
     jsonLd: [
       {
@@ -169,7 +169,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
 
   "/docs": route({
     path: "/docs",
-    updated: "2026-10-24",
+    updated: "2026-11-23",
     title: "Getting started with Plumix — Flutter architecture in C#",
     description:
       "Install Plumix, build your first widget tree in C#, and learn the Widget → Element → RenderObject architecture that Plumix ports from Flutter to .NET.",
@@ -180,14 +180,14 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
       techArticle(
         "/docs",
         "Getting started with Plumix — Flutter architecture in C#",
-        "Install Plumix from NuGet, create an Avalonia desktop host and mount your first Flutter-style widget tree in C#."
+        "Create a Plumix app with dotnet new plumix-app and run the same Flutter-style widget tree in C# on desktop, Android and iOS."
       ),
     ],
   }),
 
   "/docs/architecture": route({
     path: "/docs/architecture",
-    updated: "2026-10-24",
+    updated: "2026-11-23",
     title: "Widget, Element, RenderObject — Plumix architecture in C#",
     description:
       "Flutter's three trees in .NET: immutable widgets, elements that own lifecycle and reconciliation, and render objects that lay out and paint — explained in C#.",
@@ -223,7 +223,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
 
   "/docs/layout": route({
     path: "/docs/layout",
-    updated: "2026-10-24",
+    updated: "2026-11-23",
     title: "Layout protocol: constraints down, sizes up — Plumix docs",
     description:
       "Flutter's single-pass layout protocol in C#: a parent passes BoxConstraints down, each child returns a Size up, and the parent positions its children.",
@@ -319,7 +319,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
 
   "/netbench": route({
     path: "/netbench",
-    updated: "2026-10-24",
+    updated: "2026-11-23",
     title: "NetBench — HTTP load testing app for Android, iOS and desktop",
     description:
       "HTTP load testing from your phone or desktop: hundreds of concurrent users, live RPS, p50/p95/p99 latency and error rate. Built in C# with Plumix.",

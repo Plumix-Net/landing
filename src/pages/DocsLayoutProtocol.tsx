@@ -89,7 +89,7 @@ const DocsLayoutProtocol = () => {
       <p className="mt-3 text-muted-foreground leading-relaxed">
         Once sizes and offsets are settled, the render tree paints into layers, and hit-testing walks
         the same geometry in reverse to find which render object is under the pointer. Both phases
-        belong to Plumix — Avalonia only supplies the surface that the finished frame is drawn onto,
+        belong to Plumix — the host only supplies the surface that the finished frame is drawn onto,
         as described on the{" "}
         <Link to="/docs/architecture" className="text-primary-glow hover:text-primary">
           architecture page
