@@ -1,3 +1,160 @@
+
+## v1.0.0-preview.9 — 2026-11-23
+- New template package `Plumix.Templates`: `dotnet new plumix-app` creates shared widgets with Desktop (Avalonia),
+  Android and iOS (native hosts) projects; `--desktop/--android/--ios false` drop a head, `--application-id` sets
+  the id.
+- `Plumix.iOS` reads pixels back: `Scene.toImage` draws into a stand-in drawable over a shared texture, the way the
+  engine's `FlutterMetalLayer` drawables learn when Impeller's work completes (`FlutterMetalDrawable`).
+
+## v1.0.0-preview.8 — 2026-11-23
+- New native iOS host `Plumix.iOS` (`PlumixViewController`, `PlumixSceneDelegate`) on Impeller/Metal, without
+  Avalonia: raster thread, ports of the engine's platform plugin, text input, keyboard, VoiceOver and state restoration.
+- `Plumix.Impeller` finds HarfBuzz as an embedded framework on iOS, tvOS and Mac Catalyst.
+- Avalonia 12.1.6 compatibility: its new `Avalonia.Media.FontVariation` no longer clashes with Plumix's.
+- The Avalonia iOS sample moves to `src/Sample/Plumix.Sample.iOS`; the name `Plumix.iOS` is the native host's.
+
+## v1.0.0-preview.7 — 2026-11-23
+- `Plumix.Android` supports Android 7.0 (API 24): the engine's version checks and fallbacks for API 26–29 calls.
+- `Plumix.Android` before Android 11: draws behind the status bar and reports bars and keyboard as FlutterView does.
+
+## v1.0.0-preview.6 — 2026-11-23
+- Migration notes for this release: `docs/MIGRATION.md`.
+- Breaking: the Avalonia Android host package is `Plumix.Avalonia.Android` (namespace `Plumix.Avalonia.Android`).
+- Breaking: `Plumix` no longer depends on Avalonia, SkiaSharp or HarfBuzzSharp; they come with `Plumix.Avalonia`.
+- Breaking: `RawMagnifier` is a `StatelessWidget`; with backdrop filters it composes as Flutter does (magnifier.dart).
+- New native Android host `Plumix.Android` (`PlumixActivity`) on the new `Plumix.Impeller` backend, without Avalonia:
+  ports of the engine embedding's input, keyboard, IME, autofill, accessibility, platform channels and image codecs.
+- Drawing, text, images, the UI thread and scene rasterization go through internal host seams; `Picture`, `Path`,
+  `Shader` and filters are framework data, and `Path` ports Skia's geometry and PathOps to managed code.
+- Fixes: opacity/image-filter render objects start as non-repaint-boundaries (object.dart); relative asset keys
+  resolve on Android; Material/Cupertino painters and icon fonts no longer need a host.
+
+## v1.0.0-preview.5 — 2026-11-21
+- Migration notes for this release: `docs/MIGRATION.md`.
+- Breaking: Avalonia host moves to the new `Plumix.Avalonia` package; reference it for `PlumixApplication`/`PlumixHost`.
+- Breaking: `PlumixExtensions.Run(widget, lifetime)` is `PlumixApplication.Run`; `RunApp`/`RunWidget` stay in core.
+- Breaking: `Offset`, `Size`, `Rect` are framework structs with Dart members and `Dx`/`Dy` (geometry.dart).
+- Breaking: `Rect` keeps four edges; `Contains` excludes right/bottom; `Intersect`/`Deflate` unclamped (geometry.dart).
+- Breaking: `DartGeometry` and geometry extension helpers removed; factories are members, `Offset & Size` builds a Rect.
+- Breaking: geometry and `Radius` `==` follow Dart (NaN unequal to itself); `Equals`/`GetHashCode` stay reflexive.
+- Breaking: `FontWeight`/`FontStyle` are dart:ui types; `Medium`/`SemiBold`-style names are `W500`/`W600` (text.dart).
+- Breaking: font families are strings in text/strut/paragraph styles, `ThemeData`, `TextTheme` (text_style.dart).
+- `FontLoader` and `PlatformFonts.LoadFontFromList` register font bytes under a family at run time (font_loader.dart).
+- Breaking: `Icon` finds its font via `fontPackage`; `IconFontRegistry`, `Icon.ResolveFontFamily` removed (icon.dart).
+- `PlatformAssetBundle` resolves `packages/<assembly>/<path>` keys; `AssetBundle.LoadBytesAsync` reads bytes.
+- Breaking: `RasterImage` (dart:ui `Image`) replaces `IImage`/`Bitmap` in image, canvas and layer APIs (painting.dart).
+- Breaking: image `ColorBlendMode` and `ColorFilter.Mode` take `BlendMode`; `ColorFilter.Mode.FlutterBlendMode` removed.
+- Breaking: `Shader` replaces `IBrush` in `Gradient.CreateShader`, `Paint.Shader`, `ShaderCallback` and shader masks.
+- Breaking: `Canvas` brush/pen/geometry overloads, `ClipGeometryLayer`, `PushClipGeometry`, `ToPen` are internal.
+- Breaking: `NotchedShape.GetOuterPath` returns `Path` (notched_shapes.dart); `GradientTransform` gives `Matrix4`.
+- Breaking: `paintZigZag` takes a `Paint`; `Color`/`EdgeInsets` lose Avalonia conversions (see `AvaloniaInterop`).
+- Breaking: `EngineTexture.Paint` and `Picture.Playback(DrawingContext)` are internal; only hosts add texture kinds.
+- Public API of `Plumix`, `Plumix.Material`, `Plumix.Cupertino` names no Avalonia type (`PublicApiAvaloniaFreeTests`).
+
+## v1.0.0-preview.4 — 2026-11-20
+- Predictive back pops the route: the user gesture stops only when its settle animation ends (routes.dart).
+
+## v1.0.0-preview.3 — 2026-11-20
+- Android: `setSystemUIOverlayStyle` styles the window, so bars are transparent below API 35 (PlatformPlugin.java).
+- Host has no theme focus adorner: Fluent's focus-visible frame no longer outlines the whole view on Android 14.
+- `ImageFilter.matrix` layers draw children through the matrix: stretch overscroll no longer blurs text (layer.dart).
+- Rounded clips scale oversized radii uniformly like SkRRect: `circular(100)` on a thin bar is a stadium (rrect).
+
+## v1.0.0-preview.2 — 2026-11-20
+- Paragraph glyphs paint with grayscale anti-aliasing like SkParagraph, never LCD subpixel text (SkParagraph TextStyle).
+- Host: the dispatcher clock workaround recognizes the upstream fix in Avalonia 12.1.6 and leaves it alone.
+- Breaking: all packages target .NET 11 (`net11.0`, `net11.0-android`); consumers need the .NET 11 SDK.
+- Breaking: minimum Android is API 24 and the iOS sample's minimum is 15.0, as the .NET 11 workloads require.
+- iOS sample declares a `UIApplicationSceneManifest`, which apps built with the iOS 27 SDK must have.
+- Android: a text field node carries "label, hint" as hint text, not a nameless EditText (BaseRoleConfigurator.java).
+- Host keeps the shown frame when a scene only re-adds retained layers: an idle iOS caret no longer redraws at 60 Hz.
+
+## v1.0.0-preview.1 — 2026-10-28
+- Breaking: a Dart-shaped `EdgeInsets` replaces Avalonia `Thickness` in every signature (edge_insets.dart).
+- Breaking: `EdgeInsetsGeometry.Resolve` returns `EdgeInsets`; `RRect` edge helpers move to it (edge_insets.dart).
+- Breaking: scroll-view, chip, app-bar, card, FAB, nav and `StyleFrom` paddings are `EdgeInsetsGeometry` (material_ui).
+- Breaking: `FlutterView` padding, insets and gesture insets are `ViewPadding` (ui/platform_dispatcher.dart).
+- Breaking: `TextSelectionToolbarTextButton.GetPadding(index, total)` is directional (text_selection_toolbar_text_button.dart).
+- Insets deflate rects without clamping at zero, like Dart's `deflateRect` (edge_insets.dart).
+- Breaking: `RenderParagraph` drops flat style accessors, `PlainText` and the string ctor; only `Text` (paragraph.dart).
+- Breaking: `SelectableRegion` drops the C#-only `onTap`/`mouseCursor` options (selectable_region.dart).
+- Breaking: `ReorderableList` takes Dart's param order, `EdgeInsetsGeometry?` padding, asserts (reorderable_list.dart).
+- Breaking: `scrollController`, bool `StartItemDragReorder` and `Delayed` removed (reorderable_list.dart).
+- Breaking: `ReorderableListView` validates through Dart's asserts; no anchor range guard (reorderable_list.dart).
+- Breaking: `EditableText` matches Dart's constructor: required args, defaults, no C#-only members (editable_text.dart).
+- Breaking: `EditableText` drops its `Container`/`Focus` wrappers; cursor radius/offset nullable (editable_text.dart).
+- Breaking: `TextField.OnKeyEvent` removed; the field sets its node's `canRequestFocus` (text_field.dart).
+- `CupertinoTextField` is its field's `AutofillClient`; the placeholder is the autofill `hintText` (text_field.dart).
+- Search page closes on Escape through its own `FocusNode.onKeyEvent` (search.dart).
+- Breaking: `MaterialLocalizations.Of` throws without a delegate, no default fallback (material_localizations.dart).
+- Material widgets assert `debugCheckHasMaterialLocalizations` at all 40 Dart call sites (material_ui/lib/src).
+- `Theme.Of` falls back to englishLike typography without `MaterialLocalizations` (theme.dart).
+- Breaking: `RenderSliverMultiBoxAdaptor` takes a required get-only `ChildManager` (sliver_multi_box_adaptor.dart).
+- `GetRectOfSemanticsNodeInViewCoordinates` asserts like Dart; stale semantics actions dropped (rendering/binding.dart).
+- Focus: `debugFocusChanges` and `_focusDebug` logging at every call site, tree dump on change (focus_manager.dart).
+- `BindingBase.CheckInstance`/`DebugBindingType`, `WidgetsBinding.DebugCheckZone` (foundation/binding.dart).
+- `RunApp`/`RunWidget` assert `DebugCheckZone`; first frame sets the default `UserTag` (widgets/binding.dart).
+- `UserTag` and `DeveloperService.GetCurrentTag` (dart:developer profiler.dart).
+- `PlatformDispatcher.OnPlatformConfigurationChanged`, before each specific callback (ui/platform_dispatcher.dart).
+- Image codecs complete `GetNextFrame` on a later event-loop turn; tests turn it via `RunAsync` (multi_frame_codec.cc).
+- Breaking: `IPreferredSizeWidget.PreferredSize` is `PreferredSizeValue`, no `PreferredAppBarSize` (preferred_size.dart).
+- Sample: `ImageDemoPage` decodes its raw image like the Dart sample; captures reset caches per route; `/image` matches.
+- Text: an empty line's leading follows the strut's half-leading flag, not the style's (SkParagraph `computeEmptyMetrics`).
+- Headless paragraphs: hard-break and placeholder-only line metrics and the half-spacing shift follow SkParagraph `TextWrapper`.
+- Headless paragraphs shape FlutterTest marks like HarfBuzz (per-glyph spacing, composition, mark widths per shaper).
+- `SelectableText` merges `DefaultTextStyle` and passes an unforced `StrutStyle()` (selectable_text.dart).
+- Sample capture parity: every route matches the Dart capture or is a `DIVERGENCES.md` row (RC blocker met).
+- Headless paragraphs fake bold (w600+)/italic FlutterTest glyphs and paint backgrounds, shadows, decorations (SkParagraph).
+- Headless paragraphs keep the half letter-spacing lead-in unless an alignment shift applies (SkParagraph `TextLine`).
+- `Badge` composes `Container(clipBehavior, ShapeDecoration(StadiumBorder))` like badge.dart (badge.dart).
+- M3 `Chip` delete icon takes `_ChipDefaultsM3.deleteIconColor` (chip.dart).
+- Sample: Router/NavigatorPages buttons and TextField form buttons follow the Dart sample; 160 of 164 capture routes match.
+- Breaking: `PlatformDispatcher.TimerRun` removed; scheduler tasks and warm-up frames use `Timer.Run` (scheduler/binding.dart).
+- `FrameworkDartTester` fails on pending timers, runs warm-up frames at once, disables shadows (flutter_test binding.dart).
+- Service-extension handlers start on the framework thread; the intermittent banner-extension hang is gone (C#-only).
+- Breaking: C#-only `MaterialLocalizationsScope` removed; `MaterialLocalizations.Of` reads `Localizations` (C#-only).
+- Switch/CupertinoSwitch thumbs and the magnifier decoration paint shadows via `BoxShadow.toPaint` (switch.dart, magnifier.dart).
+- Breaking: `BoxShadowExtensions` (`ToAvalonia`) removed (C#-only).
+- Breaking: strict `SnapshotWidget` with `SnapshotPainter`/`painter`; `pixelRatio` and `SnapshotOffsetLayer` removed (snapshot_widget.dart).
+- Breaking: strict single-thread `ImageCache`; `ImageCacheStatus` ctor internal, `UntrackedStatus` removed (image_cache.dart).
+- `ImageProvider.Evict`/`ObtainCacheStatus` resume on the caller's context (image_provider.dart).
+- Breaking: `FocusNode.ToString` is Dart's diagnostics form; focus-tree diagnostics and `debugDumpFocusTree` (focus_manager.dart).
+- `RenderParagraph`/`RenderEditable` relayout, `Banner` and Cupertino pickers refresh on system font changes (object.dart).
+- Windows host forwards `WM_FONTCHANGE` as the `fontsChange` system message (C#-only).
+- Hosts answer `SystemNavigator.pop` per platform; Android no longer maps Escape/BrowserBack to `popRoute` (C#-only).
+- Hosts play system sounds/haptics natively as the engine plugins do; `PlumixHost` handler hooks (C#-only).
+- Android/iOS hosts resolve the platform locale; Android/browser report accessibility features (C#-only).
+- iOS AOT Bloc counter crash closed; `HostBinaryCompatibilityTests` binds sample packages to Plumix (C#-only).
+- Breaking: one dart:ui `Brightness` in `Plumix.UI` replaces `PlatformBrightness` and Material's enum (window.dart).
+- Breaking: `Plumix.Timer` (dart:async `Timer`) on the event loop with a fake test clock; `GestureTimer` removed.
+- Snack bar, tooltip, menu hover, search, magnifier, expansion-tile and gesture timers run on `Timer` (scaffold.dart).
+- Breaking: a second `AnimationController.Dispose` throws a `FlutterError` (animation_controller.dart).
+- Breaking: `AnimationController` duration/dispose/`repeat` checks throw Dart's errors (animation_controller.dart).
+- Breaking: Color/TextStyle/MouseCursor state-property slots are `IWidgetStateProperty`, as in Dart (widget_state.dart).
+- Breaking: `WidgetStateMouseCursor` resolves a non-null `MouseCursor`, as in Dart (widget_state.dart).
+- Breaking: `WidgetStateProperty<T>.Lerp` and `MaterialThemeLerp` lerps take `IWidgetStateProperty` (C#-only).
+- Breaking: `PipelineManifold` is an interface; `HostPipelineManifold` extends `ChangeNotifier` (rendering/object.dart).
+- Breaking: `BuildPage` moves from `Route` to `ModalRoute`, as Dart's `buildPage` (widgets/routes.dart).
+- Breaking: `ButtonThemeData.Get*Color(button)` drop `ThemeData` and read the new `ColorScheme` (button_theme.dart).
+- `ButtonTheme.Of` fills a missing `colorScheme`; `ThemeData.buttonTheme` defaults carry one (button_theme.dart).
+- `Switch.adaptive` reads `cupertinoOverrideTheme.primaryColor` unresolved, as Dart does (switch.dart).
+- `TextField`/`SelectableText` gain `selectionHeightStyle`/`selectionWidthStyle` (text_field.dart).
+- `ScrollableDetails` gains the deprecated `clipBehavior` parameter and Dart's `toString` (scrollable_helpers.dart).
+- `debugCheckHasTable`, asserted by `TableRowInkWell` (widgets/debug.dart, data_table.dart).
+- `PlatformDispatcher.FrameData` carries the vsync's frame number; `OnFrameDataChanged` added (hooks.dart).
+- Breaking: `MediaQueryData.FromView` uses `SystemTextScaler` over `ScaleFontSize` (media_query.dart).
+- Android 14+ reports its nonlinear font scaling curve to `ScaleFontSize` (platform_dispatcher.dart).
+- Breaking: `DefaultSelectionWidthStyle` is `Max` on web Safari via `BrowserDetection` (editable_text.dart).
+- Hosts report the OS's ordered preferred languages: Android, iOS, macOS, Windows, Linux (C#-only).
+- Android reports `ViewConfiguration` touch slop as the view's `GestureSettings` (gesture_settings.dart).
+- Browser host ports the web engine's typography observer: text scale and text spacing overrides (C#-only).
+
+## v0.4.0-beta.4 — 2026-10-25
+- Hosts point Avalonia's dispatcher at its platform clock; Android timers busy-spun and stalled rendering (C#-only).
+- `MediaQuery.textScaler` follows the system font size (`PlatformDispatcher.TextScaleFactor`, platform_dispatcher.dart).
+- Automation peers report a selected node without a tap action; tappable selectable nodes stay invocable (C#-only).
+- A `TextField` with a URL/email/phone keyboard is one semantics node again: no input-type conflict (semantics.dart).
+
 ## v0.4.0-beta.3 — 2026-10-24
 - Android: the Activity's back callback steps aside while the soft keyboard is shown, so back hides it first (C#-only).
 
